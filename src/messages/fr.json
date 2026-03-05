@@ -1,0 +1,34 @@
+{
+    "common": {
+        "appName": "StayBooked",
+        "loading": "Chargement...",
+        "error": "Une erreur s'est produite.",
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "delete": "Supprimer",
+        "confirm": "Confirmer",
+        "back": "Retour",
+        "next": "Suivant",
+        "close": "Fermer"
+    },
+    "nav": {
+        "dashboard": "Tableau de bord",
+        "bookings": "Réservations",
+        "calendar": "Calendrier",
+        "services": "Services",
+        "staff": "Personnel",
+        "clients": "Clients",
+        "settings": "Paramètres",
+        "logout": "Déconnexion"
+    },
+    "auth": {
+        "signIn": "Connexion",
+        "signUp": "Inscription",
+        "email": "Courriel",
+        "password": "Mot de passe",
+        "forgotPassword": "Mot de passe oublié ?"
+    },
+    "home": {
+        "welcome": "Bienvenue"
+    }
+}

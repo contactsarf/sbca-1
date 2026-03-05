@@ -1,0 +1,34 @@
+{
+    "home": {
+        "welcome": "Welcome"
+    },
+    "common": {
+        "appName": "StayBooked.ca",
+        "loading": "Loading...",
+        "error": "Something went wrong.",
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "back": "Back",
+        "next": "Next",
+        "close": "Close"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "bookings": "Bookings",
+        "calendar": "Calendar",
+        "services": "Services",
+        "staff": "Staff",
+        "clients": "Clients",
+        "settings": "Settings",
+        "logout": "Logout"
+    },
+    "auth": {
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Forgot password?"
+    }
+}
