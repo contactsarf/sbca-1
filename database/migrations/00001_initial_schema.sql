@@ -261,3 +261,224 @@ END $$;
 
 -- 24. Grant permissions
 GRANT ALL ON TABLE public.team_schedules TO anon, authenticated, service_role;
+
+-- ============================================================
+-- 25. Service-Team Member Mapping Table
+-- Links services to team members for assignment.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.service_team_members (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenant(id) ON DELETE CASCADE NOT NULL,
+    service_id UUID REFERENCES public.services(id) ON DELETE CASCADE NOT NULL,
+    team_member_id UUID REFERENCES public.teams(id) ON DELETE CASCADE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    UNIQUE (service_id, team_member_id)
+);
+
+-- 26. Indexes for service-team member mapping
+CREATE INDEX IF NOT EXISTS idx_service_team_members_tenant_id ON public.service_team_members(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_service_team_members_service_id ON public.service_team_members(service_id);
+CREATE INDEX IF NOT EXISTS idx_service_team_members_team_member_id ON public.service_team_members(team_member_id);
+
+-- 27. Enable RLS for service_team_members
+DO $$
+BEGIN
+    ALTER TABLE public.service_team_members ENABLE ROW LEVEL SECURITY;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
+
+-- 28. RLS Policies for service_team_members
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view their service-team mappings') THEN
+        CREATE POLICY "Users can view their service-team mappings"
+        ON public.service_team_members FOR SELECT
+        USING (tenant_id = public.get_auth_user_tenant());
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Owners and admins can manage service-team mappings') THEN
+        CREATE POLICY "Owners and admins can manage service-team mappings"
+        ON public.service_team_members FOR ALL
+        USING (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'))
+        WITH CHECK (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'));
+    END IF;
+END $$;
+
+-- 29. Grant permissions for service_team_members
+GRANT ALL ON TABLE public.service_team_members TO anon, authenticated, service_role;
+
+-- ============================================================
+-- 30. Clients Table
+-- Manages customer/client information separate from system users.
+-- Used for tracking visits, spending, marketing campaigns, etc.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.clients (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenant(id) ON DELETE CASCADE NOT NULL,
+    email TEXT,
+    phone TEXT,
+    name TEXT NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    -- At least one contact method required
+    CONSTRAINT clients_contact_required CHECK (email IS NOT NULL OR phone IS NOT NULL),
+    -- Email unique per tenant when provided
+    CONSTRAINT clients_email_tenant_unique UNIQUE (tenant_id, email),
+    -- Phone unique per tenant when provided
+    CONSTRAINT clients_phone_tenant_unique UNIQUE (tenant_id, phone)
+);
+
+-- 31. Indexes for clients
+CREATE INDEX IF NOT EXISTS idx_clients_tenant_id ON public.clients(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_clients_email ON public.clients(email) WHERE email IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_clients_phone ON public.clients(phone) WHERE phone IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_clients_tenant_email ON public.clients(tenant_id, email) WHERE email IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_clients_tenant_phone ON public.clients(tenant_id, phone) WHERE phone IS NOT NULL;
+
+-- 32. Enable RLS for clients
+DO $$
+BEGIN
+    ALTER TABLE public.clients ENABLE ROW LEVEL SECURITY;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
+
+-- 33. RLS Policies for clients
+DO $$
+BEGIN
+    -- Staff can view clients for their tenant
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Staff can view tenant clients') THEN
+        CREATE POLICY "Staff can view tenant clients"
+        ON public.clients FOR SELECT
+        USING (tenant_id = public.get_auth_user_tenant());
+    END IF;
+
+    -- Owners and admins can manage clients
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Owners and admins can manage clients') THEN
+        CREATE POLICY "Owners and admins can manage clients"
+        ON public.clients FOR ALL
+        USING (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'))
+        WITH CHECK (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'));
+    END IF;
+
+    -- Application can upsert clients during booking (service_role)
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Service role can upsert clients') THEN
+        CREATE POLICY "Service role can upsert clients"
+        ON public.clients FOR ALL
+        TO service_role
+        USING (true)
+        WITH CHECK (true);
+    END IF;
+END $$;
+
+-- 34. Function to automatically update updated_at timestamp
+CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 35. Trigger to update clients updated_at
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_clients_updated_at') THEN
+        CREATE TRIGGER update_clients_updated_at
+        BEFORE UPDATE ON public.clients
+        FOR EACH ROW
+        EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+END $$;
+
+-- 36. Grant permissions for clients
+GRANT ALL ON TABLE public.clients TO anon, authenticated, service_role;
+
+-- ============================================================
+-- 37. Bookings Table
+-- Core table for appointment bookings. Critical for booking engine.
+-- Optimized for high performance with millions of rows.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.bookings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    tenant_id UUID REFERENCES public.tenant(id) ON DELETE CASCADE NOT NULL,
+    client_id UUID REFERENCES public.clients(id) ON DELETE SET NULL NOT NULL,
+    service_id UUID REFERENCES public.services(id) ON DELETE SET NULL NOT NULL,
+    team_member_id UUID REFERENCES public.teams(id) ON DELETE SET NULL NOT NULL,
+    booking_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    timezone TEXT NOT NULL DEFAULT 'America/Toronto',  -- IANA timezone for accurate handling
+    status TEXT NOT NULL CHECK (status IN ('pending', 'confirmed', 'cancelled', 'completed', 'no-show')) DEFAULT 'pending',
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
+);
+
+-- 38. Critical indexes for booking engine performance
+-- Multi-column indexes optimized for common query patterns
+CREATE INDEX IF NOT EXISTS idx_bookings_tenant_date ON public.bookings(tenant_id, booking_date) WHERE status NOT IN ('cancelled');
+CREATE INDEX IF NOT EXISTS idx_bookings_staff_date ON public.bookings(team_member_id, booking_date) WHERE status NOT IN ('cancelled');
+CREATE INDEX IF NOT EXISTS idx_bookings_client ON public.bookings(client_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_service ON public.bookings(service_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_status ON public.bookings(status);
+
+-- Composite index for fast availability checks (booking engine's most frequent query)
+CREATE INDEX IF NOT EXISTS idx_bookings_availability_lookup 
+ON public.bookings(tenant_id, team_member_id, booking_date, start_time, end_time) 
+WHERE status IN ('confirmed', 'pending');
+
+-- 39. Enable RLS for bookings
+DO $$
+BEGIN
+    ALTER TABLE public.bookings ENABLE ROW LEVEL SECURITY;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
+
+-- 40. RLS Policies for bookings
+DO $$
+BEGIN
+    -- Staff can view all bookings for their tenant
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Staff can view all tenant bookings') THEN
+        CREATE POLICY "Staff can view all tenant bookings"
+        ON public.bookings FOR SELECT
+        USING (tenant_id = public.get_auth_user_tenant());
+    END IF;
+
+    -- Anonymous and authenticated users can create bookings (public booking flow)
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Public can create bookings') THEN
+        CREATE POLICY "Public can create bookings"
+        ON public.bookings FOR INSERT
+        TO anon, authenticated
+        WITH CHECK (true);  -- Validation happens in application logic
+    END IF;
+
+    -- Only owners/admins can update bookings
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Owners and admins can manage bookings') THEN
+        CREATE POLICY "Owners and admins can manage bookings"
+        ON public.bookings FOR UPDATE
+        USING (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'))
+        WITH CHECK (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'));
+    END IF;
+
+    -- Only owners/admins can delete bookings
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Owners and admins can delete bookings') THEN
+        CREATE POLICY "Owners and admins can delete bookings"
+        ON public.bookings FOR DELETE
+        USING (tenant_id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin'));
+    END IF;
+END $$;
+
+-- 41. Trigger to update bookings updated_at
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_bookings_updated_at') THEN
+        CREATE TRIGGER update_bookings_updated_at
+        BEFORE UPDATE ON public.bookings
+        FOR EACH ROW
+        EXECUTE FUNCTION public.update_updated_at_column();
+    END IF;
+END $$;
+
+-- 42. Grant permissions for bookings
+GRANT ALL ON TABLE public.bookings TO anon, authenticated, service_role;

@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
 
 function Logo() {
     return (
@@ -25,10 +23,8 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-    const [open, setOpen] = useState(false);
-
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-sm">
+        <header className="sticky top-0 z-50 mb-3 md:mb-0 w-full border-b border-slate-100 bg-white/90 backdrop-blur-sm">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <Logo />
 
@@ -61,45 +57,37 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                {/* Mobile hamburger */}
-                <button
-                    className="md:hidden p-2 text-tertiary"
-                    onClick={() => setOpen(!open)}
-                    aria-label={open ? "Close menu" : "Open menu"}
-                >
-                    {open ? <X size={20} /> : <Menu size={20} />}
-                </button>
+                {/* Mobile CTA */}
+                <div className="md:hidden flex items-center gap-2">
+                    <Link
+                        href="/en/auth/login"
+                        className="h-8 px-3 rounded-lg text-xs font-medium text-tertiary border border-tertiary/40 hover:bg-background transition-colors duration-200 inline-flex items-center"
+                    >
+                        Login
+                    </Link>
+                    <Link
+                        href="/en/auth/signup"
+                        className="h-8 px-3 rounded-lg text-xs font-medium text-white bg-primary hover:bg-primary-dark transition-colors duration-200 inline-flex items-center"
+                    >
+                        Sign Up
+                    </Link>
+                </div>
             </div>
 
-            {/* Mobile drawer */}
-            {open && (
-                <div className="md:hidden border-t border-slate-100 bg-white px-4 pb-4 pt-2 space-y-3">
+            {/* Mobile second row nav */}
+            <nav className="md:hidden border-t border-slate-100 bg-white px-4 py-2">
+                <div className="mx-auto flex h-9 max-w-6xl items-center justify-center gap-2 overflow-x-auto">
                     {navLinks.map((link) => (
                         <Link
                             key={link.href}
                             href={link.href}
-                            onClick={() => setOpen(false)}
-                            className="block text-sm text-tertiary hover:text-primary py-1"
+                            className="inline-flex h-7 items-center rounded-md px-3 text-sm font-semibold text-tertiary hover:bg-background hover:text-primary transition-colors duration-200 whitespace-nowrap"
                         >
                             {link.label}
                         </Link>
                     ))}
-                    <div className="flex flex-col gap-2 pt-2">
-                        <Link
-                            href="/en/auth/login"
-                            className="h-9 px-4 rounded-lg text-sm font-medium text-tertiary border border-tertiary/50 text-center flex items-center justify-center"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            href="/en/auth/signup"
-                            className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-primary text-center flex items-center justify-center"
-                        >
-                            Sign Up Free
-                        </Link>
-                    </div>
                 </div>
-            )}
+            </nav>
         </header>
     );
 }

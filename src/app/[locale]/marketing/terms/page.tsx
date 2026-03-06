@@ -3,7 +3,7 @@ import Navbar from "@/components/marketing/Navbar";
 import Footer from "@/components/marketing/Footer";
 
 export const metadata: Metadata = {
-    title: "Terms of Service — StayBooked.ca",
+    title: "Terms of Service - StayBooked.ca",
     description: "StayBooked.ca Terms of Service. Read our full terms covering usage, billing, data, and liability.",
 };
 
@@ -66,7 +66,7 @@ const sections = [
     },
     {
         heading: "15. Contact Us",
-        body: `For questions about these Terms, please contact us at: legal@staybooked.ca`,
+        body: `For questions about these Terms, please contact us at: support@staybooked.ca`,
     },
 ];
 

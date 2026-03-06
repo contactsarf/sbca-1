@@ -4,7 +4,7 @@ import Navbar from "@/components/marketing/Navbar";
 import Footer from "@/components/marketing/Footer";
 
 export const metadata: Metadata = {
-    title: "FAQ — StayBooked.ca",
+    title: "FAQ - StayBooked.ca",
     description:
         "Frequently asked questions about StayBooked.ca — registration, billing, data, and more.",
 };
@@ -15,7 +15,7 @@ const faqs = [
         items: [
             {
                 q: "How do I create an account?",
-                a: "Click \"Sign Up Free\" on our homepage. Enter your business name, email, and a password. You'll have your booking page live in under 5 minutes — no credit card needed.",
+                a: "Click \"Sign Up Free\" on our homepage. Enter your business name, email, and a password. You'll have your booking page live in under 5 minutes - no credit card needed.",
             },
             {
                 q: "Do I need technical knowledge to set up StayBooked?",
@@ -23,7 +23,7 @@ const faqs = [
             },
             {
                 q: "Can I import my existing client list?",
-                a: "Yes — you can upload a CSV of existing clients from the Clients section of your dashboard.",
+                a: "Yes, you can upload a CSV of existing clients from the Clients section of your dashboard.",
             },
         ],
     },
@@ -39,7 +39,7 @@ const faqs = [
                 a: "At the end of each calendar month, we tally your confirmed bookings and send an invoice. Payment is due within 7 days.",
             },
             {
-                q: "What if I cancel a booking — am I still charged?",
+                q: "What if I cancel a booking, am I still charged?",
                 a: "No. Only confirmed, completed bookings count toward your invoice. Cancelled and no-show bookings are not charged.",
             },
             {
@@ -61,7 +61,7 @@ const faqs = [
             },
             {
                 q: "Does StayBooked support group bookings?",
-                a: "Yes. You can configure services to allow multiple clients per slot — useful for classes, group sessions, or workshops.",
+                a: "Yes. You can configure services to allow multiple clients per slot, useful for classes, group sessions, or workshops.",
             },
             {
                 q: "How do staff members access their schedule?",
@@ -121,7 +121,7 @@ export default function FaqPage() {
                         </h1>
                         <p className="text-sm text-tertiary">
                             Can&apos;t find what you&apos;re looking for?{" "}
-                            <Link href="mailto:hello@staybooked.ca" className="text-primary hover:underline">
+                            <Link href="mailto:support@staybooked.ca" className="text-primary hover:underline">
                                 Contact us
                             </Link>
                         </p>

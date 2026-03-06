@@ -16,7 +16,7 @@ export default async function TeamsPage() {
     return (
         <div className="space-y-6">
             <AdminPageHeader
-                title="Teams"
+                title="Team"
                 description="Manage your staff and team members."
                 action={{
                     href: `/${locale}/admin/teams/new`,

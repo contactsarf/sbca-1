@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Camera, X } from "lucide-react";
+import { Camera } from "lucide-react";
 
 interface AvatarUploadProps {
     defaultValue?: string;
@@ -65,18 +65,6 @@ export default function AvatarUpload({ defaultValue, name, onFileSelect }: Avata
                 <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Camera className="w-7 h-7 text-white" />
                 </div>
-
-                {/* Remove button */}
-                {preview && (
-                    <button
-                        type="button"
-                        onClick={handleRemove}
-                        aria-label="Remove avatar"
-                        className="absolute -top-1 -right-1 bg-white border border-primary/20 rounded-full p-1 text-danger hover:bg-danger/10 transition-colors shadow-sm"
-                    >
-                        <X className="w-4 h-4" />
-                    </button>
-                )}
             </div>
 
             <input
@@ -88,7 +76,17 @@ export default function AvatarUpload({ defaultValue, name, onFileSelect }: Avata
                 name="avatar_file"
             />
 
-            <p className="text-xs text-tertiary">Click to upload photo</p>
+            {preview ? (
+                <button
+                    type="button"
+                    onClick={handleRemove}
+                    className="text-xs text-danger hover:text-danger/80 font-medium transition-colors"
+                >
+                    Remove
+                </button>
+            ) : (
+                <p className="text-xs text-tertiary">Click to upload photo</p>
+            )}
         </div>
     );
 }

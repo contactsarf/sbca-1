@@ -44,23 +44,26 @@ export interface StaffMember {
 export interface Booking {
     id: string;
     tenant_id: string;
+    client_id: string;
     service_id: string;
-    staff_id: string;
-    client_name: string;
-    client_email: string;
-    client_phone?: string;
-    starts_at: string;
-    ends_at: string;
-    status: "pending" | "confirmed" | "cancelled" | "completed";
+    team_member_id: string;
+    booking_date: string;  // YYYY-MM-DD
+    start_time: string;    // HH:MM:SS
+    end_time: string;      // HH:MM:SS
+    timezone: string;      // IANA timezone
+    status: "pending" | "confirmed" | "cancelled" | "completed" | "no-show";
     notes?: string;
     created_at: string;
+    updated_at: string;
 }
 
 export interface Client {
     id: string;
     tenant_id: string;
-    full_name: string;
-    email: string;
-    phone?: string;
+    email?: string | null;
+    phone?: string | null;
+    name: string;
+    notes?: string | null;
     created_at: string;
+    updated_at: string;
 }

@@ -7,12 +7,22 @@ import { ChevronLeft, Info, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Service } from "@/types";
 import { DURATION_OPTIONS } from "@/constants/durations";
+import { createClient } from "@/lib/supabase/client";
+
+type TeamMemberOption = {
+    id: string;
+    name: string;
+    avatar_url?: string | null;
+};
 
 export default function EditServicePage() {
     const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
     const [service, setService] = useState<Service | null>(null);
     const [selectedDeposit, setSelectedDeposit] = useState<string>("");
+    const [teamMembers, setTeamMembers] = useState<TeamMemberOption[]>([]);
+    const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([]);
+    const [loadingTeamMembers, setLoadingTeamMembers] = useState(true);
     const [loading, setLoading] = useState(true);
     const params = useParams();
     const router = useRouter();
@@ -32,6 +42,40 @@ export default function EditServicePage() {
         }
         loadService();
     }, [id]);
+
+    useEffect(() => {
+        const fetchTeamMembers = async () => {
+            const supabase = createClient();
+            const [{ data: membersData, error: membersError }, { data: mappingData, error: mappingError }] = await Promise.all([
+                supabase.from("teams").select("id, name, avatar_url").order("name", { ascending: true }),
+                supabase.from("service_team_members").select("team_member_id").eq("service_id", id),
+            ]);
+
+            if (membersError) {
+                console.error("Error loading team members:", membersError);
+            } else {
+                setTeamMembers(membersData ?? []);
+            }
+
+            if (mappingError) {
+                console.error("Error loading service assignments:", mappingError);
+            } else {
+                setSelectedTeamMembers((mappingData ?? []).map((row) => row.team_member_id));
+            }
+
+            setLoadingTeamMembers(false);
+        };
+
+        fetchTeamMembers();
+    }, [id]);
+
+    const toggleTeamMember = (teamMemberId: string) => {
+        setSelectedTeamMembers((prev) =>
+            prev.includes(teamMemberId)
+                ? prev.filter((memberId) => memberId !== teamMemberId)
+                : [...prev, teamMemberId]
+        );
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -98,13 +142,16 @@ export default function EditServicePage() {
                 </button>
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-200 bg-slate-50/50">
+            <div className="relative bg-gradient-to-br from-white via-white to-primary/5 border border-primary/10 rounded-xl shadow-sm overflow-hidden">
+                {/* Gradient overlay in corner */}
+                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full pointer-events-none" />
+                
+                <div className="relative p-6 border-b border-primary/10 bg-primary/5">
                     <h1 className="text-2xl font-semibold text-foreground">Edit Service</h1>
                     <p className="text-sm text-tertiary">Update the details and configuration for this service.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-8 space-y-8">
+                <form onSubmit={handleSubmit} className="relative p-8 space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Service Name */}
                         <div className="md:col-span-2">
@@ -179,7 +226,7 @@ export default function EditServicePage() {
                             <label className="block text-sm font-semibold text-foreground mb-3">
                                 Deposit Required
                             </label>
-                            <div className="flex overflow-x-auto pb-2 gap-3 scrollbar-hide -mx-1 px-1">
+                            <div className="flex flex-wrap gap-3">
                                 {[
                                     { label: "None", value: "" },
                                     { label: "10%", value: "10" },
@@ -204,6 +251,76 @@ export default function EditServicePage() {
                             <p className="mt-2 text-xs text-tertiary flex items-center gap-1">
                                 <Info className="w-3 h-3" />
                                 Percentage of price required upfront.
+                            </p>
+                        </div>
+
+                        {/* Assigned Staff */}
+                        <div className="md:col-span-2 mt-4">
+                            <div className="flex items-center justify-between mb-3">
+                                <label className="block text-sm font-semibold text-foreground">
+                                    Assigned Staff
+                                </label>
+                                <span className="text-xs text-tertiary">
+                                    {selectedTeamMembers.length} selected
+                                </span>
+                            </div>
+                            {loadingTeamMembers ? (
+                                <div className="text-sm text-tertiary">
+                                    Loading team members...
+                                </div>
+                            ) : teamMembers.length === 0 ? (
+                                <div className="text-sm text-tertiary">
+                                    No team members found yet.
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {teamMembers.map((member) => {
+                                        const isSelected = selectedTeamMembers.includes(member.id);
+                                        return (
+                                            <button
+                                                key={member.id}
+                                                type="button"
+                                                onClick={() => toggleTeamMember(member.id)}
+                                                aria-pressed={isSelected}
+                                                className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all ${isSelected
+                                                    ? "border-primary bg-primary/10"
+                                                    : "border-slate-200 hover:border-primary/40 hover:bg-slate-50"
+                                                    }`}
+                                            >
+                                                {member.avatar_url ? (
+                                                    <img
+                                                        src={member.avatar_url}
+                                                        alt={member.name}
+                                                        className="h-9 w-9 rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className={`h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold ${isSelected
+                                                        ? "bg-primary text-white"
+                                                        : "bg-primary/10 text-primary"
+                                                        }`}>
+                                                        {member.name.charAt(0)}
+                                                    </div>
+                                                )}
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-semibold text-foreground truncate">
+                                                        {member.name}
+                                                    </p>
+                                                    <p className="text-xs text-tertiary">
+                                                        Tap to {isSelected ? "remove" : "assign"}
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                            <input
+                                type="hidden"
+                                name="team_member_ids"
+                                value={JSON.stringify(selectedTeamMembers)}
+                            />
+                            <p className="mt-2 text-xs text-tertiary">
+                                Assign team members who can deliver this service.
                             </p>
                         </div>
 

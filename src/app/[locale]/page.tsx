@@ -26,9 +26,9 @@ import Navbar from "@/components/marketing/Navbar";
 import Footer from "@/components/marketing/Footer";
 
 export const metadata: Metadata = {
-    title: "StayBooked.ca — Smart Online Booking for Service Businesses",
+    title: "StayBooked.ca - Smart Online Booking for Service Businesses",
     description:
-        "Simplify appointment booking for your salon, spa, clinic, or service business. Multi-staff scheduling, deposits, tax reports, and more — no monthly fees.",
+        "Simplify appointment booking for your salon, spa, clinic, or service business. Multi-staff scheduling, deposits, tax reports, and more - no monthly fees.",
     keywords: [
         "online booking",
         "appointment scheduling",
@@ -47,10 +47,7 @@ function Hero() {
                 <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
                     {/* Copy */}
                     <div className="flex-1 text-center lg:text-left space-y-8 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-secondary bg-secondary/10 px-4 py-1.5 text-xs font-semibold text-primary shadow-sm">
-                            <Sparkles size={14} className="animate-pulse" />
-                            No monthly fees — ever
-                        </div>
+                        
                         <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
                             Never Miss a{" "}
                             <span className="text-primary">Booking Again</span>
@@ -58,11 +55,11 @@ function Hero() {
                         <p className="text-lg text-tertiary leading-relaxed max-w-lg mx-auto lg:mx-0">
                             The simplest way to take online bookings for your service
                             business. Multi-staff scheduling, group bookings, deposits, and
-                            powerful reports — all with no monthly fees.
+                            powerful reports all with no monthly fees.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
                             <Link
-                                href="/signup"
+                                href="/en/auth/signup"
                                 className="h-12 px-8 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                             >
                                 Get Started for Free
@@ -85,7 +82,7 @@ function Hero() {
                         <div className="absolute -inset-4 bg-secondary/20 rounded-[2.5rem] blur-2xl lg:-rotate-2"></div>
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 lg:rotate-1">
                             <Image
-                                src="/hero.png"
+                                src="/booking-flow-illustration.svg"
                                 alt="StayBooked appointment booking dashboard"
                                 width={800}
                                 height={500}
@@ -103,7 +100,7 @@ function Hero() {
 /* ─────────────────────────── PURPOSE ─────────────────────────── */
 function Purpose() {
     const stats = [
-        { value: "29¢", label: "per booking — that's it" },
+        { value: "29¢", label: "per booking, that's it" },
         { value: "5 min", label: "to get up and running" },
         { value: "100%", label: "of your data, always yours" },
     ];
@@ -153,7 +150,7 @@ function Purpose() {
                         },
                         {
                             problem: "Expensive per-seat monthly SaaS bills",
-                            solution: "Pay 29¢ per booking — nothing when business is slow",
+                            solution: "Pay 29¢ per booking, nothing when business is slow",
                         },
                     ].map((item) => (
                         <div
@@ -300,14 +297,14 @@ const comingSoon = [
 
 function Features() {
     return (
-        <section id="features" className="bg-background py-24 sm:py-32 border-y border-slate-100">
+        <section id="features" className="scroll-mt-24 md:scroll-mt-16 bg-background py-24 sm:py-32 border-y border-slate-100">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center space-y-4 mb-16">
                     <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                         Everything You Need, Nothing You Don&apos;t
                     </h2>
                     <p className="text-base text-tertiary">
-                        All features included — no add-ons, no tiers, no surprises.
+                        All features included, no add-ons, no tiers, no surprises.
                     </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
@@ -362,13 +359,13 @@ const pricingPerks = [
     "Multi-staff & group bookings",
     "GST/HST reports & financials",
     "QR code & branded booking page",
-    "No lock-in — cancel anytime",
+    "No lock-in - cancel anytime",
     "Export all your data, anytime",
 ];
 
 function Pricing() {
     return (
-        <section id="pricing" className="bg-white py-24 sm:py-32">
+        <section id="pricing" className="scroll-mt-24 md:scroll-mt-16 bg-white py-24 sm:py-32">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center space-y-4 mb-16">
                     <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
@@ -411,7 +408,7 @@ function Pricing() {
 
                         <div className="space-y-4 pt-4">
                             <Link
-                                href="/signup"
+                                href="/en/auth/signup"
                                 className="block h-14 rounded-2xl text-base font-bold text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/25 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                             >
                                 Get Started for Free
@@ -514,7 +511,7 @@ function CtaBanner() {
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <Link
-                        href="/signup"
+                        href="/en/auth/signup"
                         className="h-14 px-12 rounded-2xl text-base font-bold text-primary bg-white hover:bg-background shadow-xl shadow-black/10 hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
                     >
                         Get Started for Free

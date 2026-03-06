@@ -1,29 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import {
-    LayoutDashboard,
-    Calendar,
-    ClipboardList,
-    Users,
-    UserSquare2,
-    Settings,
-    LogOut,
-    Scissors
-} from "lucide-react";
 import Link from "next/link";
 import { getLocale } from "next-intl/server";
+import { LogOut } from "lucide-react";
 import AdminNavbar from "@/components/admin/AdminNavbar";
+import AdminSidebarNav from "@/components/admin/AdminSidebarNav";
 
-// Helper to map icon names to components for the Server Component part (sidebar)
-const iconMap: Record<string, any> = {
-    LayoutDashboard,
-    Calendar,
-    ClipboardList,
-    Users,
-    UserSquare2,
-    Settings,
-    Scissors,
-};
 
 interface NavItem {
     label: string;
@@ -63,7 +45,7 @@ export default async function AdminLayout({
         { label: "Bookings", href: `/${locale}/admin/bookings`, iconName: "ClipboardList" },
         { label: "Calendar", href: `/${locale}/admin/calendar`, iconName: "Calendar" },
         { label: "Services", href: `/${locale}/admin/services`, iconName: "Scissors" },
-        { label: "Teams", href: `/${locale}/admin/teams`, iconName: "UserSquare2" },
+        { label: "Team", href: `/${locale}/admin/teams`, iconName: "UserSquare2" },
         { label: "Clients", href: `/${locale}/admin/clients`, iconName: "Users" },
         { label: "Settings", href: `/${locale}/admin/settings`, iconName: "Settings" },
     ];
@@ -74,37 +56,25 @@ export default async function AdminLayout({
             <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-foreground text-white flex-col z-50">
                 <div className="p-6 border-b border-primary/20">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-primary rounded flex items-center justify-center font-bold">
-                            S
-                        </div>
-                        <span className="font-bold text-lg tracking-tight">StayBooked</span>
+                        {/* Two-tone wordmark */}
+                        <span className="font-bold text-lg tracking-tight">
+                            Stay<span className="text-secondary">Booked</span>
+                        </span>
                     </div>
                     <div className="mt-4 text-xs font-medium text-secondary uppercase tracking-wider truncate">
                         {tenantName}
                     </div>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                    {navItems.map((item) => {
-                        const Icon = iconMap[item.iconName];
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-white hover:bg-primary/20 transition-all select-none active:scale-95 active:opacity-70 group"
-                            >
-                                {Icon && <Icon className="w-5 h-5 group-hover:text-secondary" />}
-                                {item.label}
-                            </Link>
-                        );
-                    })}
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                    <AdminSidebarNav navItems={navItems} />
                 </nav>
 
                 <div className="p-4 border-t border-primary/20">
                     <form action="/auth/signout" method="post">
                         <button
                             type="submit"
-                            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-secondary hover:text-white hover:bg-danger/10 hover:text-danger transition-colors group"
+                            className="flex items-center gap-3 w-full px-4 py-3.5 rounded-lg text-sm font-medium text-secondary hover:text-white hover:bg-danger/10 hover:text-danger transition-colors group"
                         >
                             <LogOut className="w-5 h-5" />
                             Logout

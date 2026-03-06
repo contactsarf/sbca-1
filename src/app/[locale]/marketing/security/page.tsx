@@ -104,8 +104,8 @@ export default function SecurityPage() {
                         <p className="text-sm text-tertiary leading-relaxed">
                             <span className="font-medium text-primary">Responsible Disclosure:</span>{" "}
                             If you discover a potential security vulnerability in our platform, please report it responsibly to{" "}
-                            <a href="mailto:security@staybooked.ca" className="text-primary hover:underline">
-                                security@staybooked.ca
+                            <a href="mailto:support@staybooked.ca" className="text-primary hover:underline">
+                                support@staybooked.ca
                             </a>
                             . We commit to responding within 48 hours and to working collaboratively toward a resolution.
                         </p>

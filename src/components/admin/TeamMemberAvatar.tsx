@@ -5,13 +5,14 @@ import { useState } from "react";
 interface TeamMemberAvatarProps {
     src?: string | null;
     name: string;
-    size?: "sm" | "md" | "lg";
+    size?: "sm" | "md" | "lg" | "xl";
 }
 
 const sizeClasses = {
     sm: { wrapper: "w-8 h-8", text: "text-xs" },
     md: { wrapper: "w-12 h-12", text: "text-base" },
     lg: { wrapper: "w-20 h-20", text: "text-2xl" },
+    xl: { wrapper: "w-32 h-32", text: "text-5xl" },
 };
 
 export default function TeamMemberAvatar({ src, name, size = "md" }: TeamMemberAvatarProps) {

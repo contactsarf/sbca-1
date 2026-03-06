@@ -42,7 +42,7 @@ const sections = [
     },
     {
         heading: "9. Your Rights",
-        body: `Under PIPEDA, you have the right to:\n• Access the personal information we hold about you;\n• Request corrections to inaccurate or incomplete information;\n• Withdraw consent to processing where consent is the legal basis;\n• Request deletion of your account and associated data;\n• Receive a copy of your data in a portable format.\nTo exercise these rights, contact us at privacy@staybooked.ca.`,
+        body: `Under PIPEDA, you have the right to:\n• Access the personal information we hold about you;\n• Request corrections to inaccurate or incomplete information;\n• Withdraw consent to processing where consent is the legal basis;\n• Request deletion of your account and associated data;\n• Receive a copy of your data in a portable format.\nTo exercise these rights, contact us at support@staybooked.ca.`,
     },
     {
         heading: "10. Children's Privacy",
@@ -54,7 +54,7 @@ const sections = [
     },
     {
         heading: "12. Contact Our Privacy Officer",
-        body: `If you have questions, concerns, or complaints about our privacy practices, contact:\n\nPrivacy Officer\nStayBooked Inc.\nEmail: privacy@staybooked.ca`,
+        body: `If you have questions, concerns, or complaints about our privacy practices, contact:\n\nPrivacy Officer\nStayBooked Inc.\nEmail: support@staybooked.ca`,
     },
 ];
 

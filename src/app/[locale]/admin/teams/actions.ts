@@ -47,12 +47,55 @@ export async function upsertTeamMember(formData: FormData, locale: string, id?: 
         avatar_url = publicUrl;
     }
 
-    const memberData = {
+    const serviceIdsRaw = formData.get("service_ids") as string | null;
+    const serviceIds = serviceIdsRaw ? JSON.parse(serviceIdsRaw) as string[] : [];
+
+    const memberData: any = {
         tenant_id: profile.tenant_id,
         name,
         bio,
-        avatar_url,
         joined_date: joined_date || new Date().toISOString().split('T')[0],
+    };
+
+    // Only include avatar_url if a new file was uploaded
+    if (avatarFile && avatarFile.size > 0) {
+        memberData.avatar_url = avatar_url;
+    } else if (!id) {
+        // For new members, include avatar_url even if empty (will be null)
+        memberData.avatar_url = avatar_url;
+    }
+    // For existing members without a new file, don't include avatar_url so it's not overwritten
+
+    const syncServices = async (teamMemberId: string) => {
+        const { error: deleteError } = await supabase
+            .from("service_team_members")
+            .delete()
+            .eq("team_member_id", teamMemberId)
+            .eq("tenant_id", profile.tenant_id);
+
+        if (deleteError) {
+            return { error: deleteError.message };
+        }
+
+        if (serviceIds.length === 0) {
+            return { success: true };
+        }
+
+        const rows = serviceIds.map((serviceId) => ({
+            tenant_id: profile.tenant_id,
+            service_id: serviceId,
+            team_member_id: teamMemberId,
+        }));
+
+        const { error: insertError } = await supabase
+            .from("service_team_members")
+            .insert(rows);
+
+        if (insertError) {
+            return { error: insertError.message };
+        }
+
+        return { success: true };
     };
 
     let error;
@@ -62,11 +105,27 @@ export async function upsertTeamMember(formData: FormData, locale: string, id?: 
             .update(memberData)
             .eq("id", id);
         error = updateError;
+
+        if (!error) {
+            const syncResult = await syncServices(id);
+            if (syncResult.error) {
+                return { error: syncResult.error };
+            }
+        }
     } else {
-        const { error: insertError } = await supabase
+        const { data: createdMember, error: insertError } = await supabase
             .from("teams")
-            .insert(memberData);
+            .insert(memberData)
+            .select("id")
+            .single();
         error = insertError;
+
+        if (!error && createdMember?.id) {
+            const syncResult = await syncServices(createdMember.id);
+            if (syncResult.error) {
+                return { error: syncResult.error };
+            }
+        }
     }
 
     if (error) {

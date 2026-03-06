@@ -79,5 +79,4 @@ Mobile:
 
 ## Component standards
 - All buttons: font-medium transition-colors duration-200
-- All buttons and page elemenst should use standard and unifor sizes
-- dont use the AI "—" in the content, make the language appear normal and regula not AI generated
+- All cards should have a white background and no borders, with a subtle shadow for separation from the background. The corners should be rounded (8px-12px) to match the overall design aesthetic. The padding inside the cards should be consistent (e.g., p-4 or p-6) to ensure a clean and cohesive look across the app.

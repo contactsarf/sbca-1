@@ -58,6 +58,9 @@ export async function upsertService(formData: FormData, locale: string, id?: str
     const deposit_percentage = formData.get("deposit_percentage") ? parseInt(formData.get("deposit_percentage") as string) : null;
     const is_paused = formData.get("is_paused") === "on";
 
+    const teamMemberIdsRaw = formData.get("team_member_ids") as string | null;
+    const teamMemberIds = teamMemberIdsRaw ? JSON.parse(teamMemberIdsRaw) as string[] : [];
+
     const serviceData = {
         tenant_id: profile.tenant_id,
         name,
@@ -68,6 +71,38 @@ export async function upsertService(formData: FormData, locale: string, id?: str
         is_paused,
     };
 
+    const syncTeamMembers = async (serviceId: string) => {
+        const { error: deleteError } = await supabase
+            .from("service_team_members")
+            .delete()
+            .eq("service_id", serviceId)
+            .eq("tenant_id", profile.tenant_id);
+
+        if (deleteError) {
+            return { error: deleteError.message };
+        }
+
+        if (teamMemberIds.length === 0) {
+            return { success: true };
+        }
+
+        const rows = teamMemberIds.map((teamMemberId) => ({
+            tenant_id: profile.tenant_id,
+            service_id: serviceId,
+            team_member_id: teamMemberId,
+        }));
+
+        const { error: insertError } = await supabase
+            .from("service_team_members")
+            .insert(rows);
+
+        if (insertError) {
+            return { error: insertError.message };
+        }
+
+        return { success: true };
+    };
+
     let error;
     if (id) {
         const { error: updateError } = await supabase
@@ -75,11 +110,27 @@ export async function upsertService(formData: FormData, locale: string, id?: str
             .update(serviceData)
             .eq("id", id);
         error = updateError;
+
+        if (!error) {
+            const syncResult = await syncTeamMembers(id);
+            if (syncResult.error) {
+                return { error: syncResult.error };
+            }
+        }
     } else {
-        const { error: insertError } = await supabase
+        const { data: createdService, error: insertError } = await supabase
             .from("services")
-            .insert(serviceData);
+            .insert(serviceData)
+            .select("id")
+            .single();
         error = insertError;
+
+        if (!error && createdService?.id) {
+            const syncResult = await syncTeamMembers(createdService.id);
+            if (syncResult.error) {
+                return { error: syncResult.error };
+            }
+        }
     }
 
     if (error) {

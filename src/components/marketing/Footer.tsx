@@ -4,7 +4,7 @@ const footerLinks = [
     { label: "Terms of Service", href: "/marketing/terms" },
     { label: "Privacy Policy", href: "/marketing/privacy" },
     { label: "Security", href: "/marketing/security" },
-    { label: "FAQ", href: "/marketing/faq" },
+  
 ];
 
 export default function Footer() {
@@ -12,7 +12,7 @@ export default function Footer() {
         <footer className="border-t border-slate-100 bg-white">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-xs text-tertiary">
-                    © {new Date().getFullYear()} StayBooked.ca — All rights reserved.
+                    © {new Date().getFullYear()} StayBooked.ca - All rights reserved.
                 </p>
                 <nav className="flex flex-wrap items-center gap-4 justify-center">
                     {footerLinks.map((link) => (

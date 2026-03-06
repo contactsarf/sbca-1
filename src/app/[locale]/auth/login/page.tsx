@@ -25,7 +25,22 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+        <div className="min-h-screen bg-background">
+            {/* Logo */}
+            <div className="absolute top-6 left-4 sm:left-8">
+                <Link href="/" className="flex items-center gap-2.5">
+                    <span className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg leading-none select-none">
+                        S
+                    </span>
+                    <span className="text-base font-semibold tracking-tight text-foreground">
+                        Stay<span className="font-bold text-primary">Booked</span>
+                        <span className="text-slate-400">.ca</span>
+                    </span>
+                </Link>
+            </div>
+
+            {/* Form Container */}
+            <div className="min-h-screen flex items-center justify-center px-4 py-12">
             <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-slate-200">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-foreground">Welcome Back</h1>
@@ -98,6 +113,7 @@ export default function LoginPage() {
                         </Link>
                     </p>
                 </div>
+            </div>
             </div>
         </div>
     );
