@@ -12,7 +12,23 @@ CREATE TABLE IF NOT EXISTS public.tenant (
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     logo_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT now() NOT NULL
+    logo_size INTEGER DEFAULT 72,
+    timezone TEXT DEFAULT 'America/Toronto',
+    tax_province TEXT DEFAULT 'ON',
+    primary_contact_name TEXT,
+    primary_contact_email TEXT,
+    primary_contact_phone TEXT,
+    public_email TEXT,
+    public_phone TEXT,
+    public_website TEXT,
+    public_instagram TEXT,
+    public_address TEXT,
+    public_message TEXT,
+    stripe_connect_account_id TEXT,
+    stripe_connect_status TEXT DEFAULT 'not_connected',
+    interac_email TEXT,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL
 );
 
 -- 3. Create Profiles Table
@@ -77,7 +93,7 @@ BEGIN
     END IF;
 
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Owners can update their tenant') THEN
-        CREATE POLICY "Owners can update their tenant" ON public.tenant FOR UPDATE USING (auth.uid() = owner_id OR (id = public.get_auth_user_tenant() AND public.get_auth_user_role() = 'owner'));
+        CREATE POLICY "Owners can update their tenant" ON public.tenant FOR UPDATE USING (auth.uid() = owner_id OR (id = public.get_auth_user_tenant() AND public.get_auth_user_role() IN ('owner', 'admin')));
     END IF;
 END $$;
 
@@ -126,6 +142,26 @@ BEGIN
         CREATE TRIGGER on_auth_user_created
         AFTER INSERT ON auth.users
         FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+    END IF;
+END $$;
+
+-- 11a. Function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 11b. Trigger to update tenant updated_at
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_tenant_updated_at') THEN
+        CREATE TRIGGER update_tenant_updated_at
+        BEFORE UPDATE ON public.tenant
+        FOR EACH ROW
+        EXECUTE FUNCTION update_updated_at_column();
     END IF;
 END $$;
 

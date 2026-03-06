@@ -4,10 +4,28 @@ export type Locale = "en";
 
 export interface Tenant {
     id: string;
+    owner_id?: string;
     name: string;
     slug: string;
-    logo_url?: string;
+    logo_url?: string | null;
+    logo_size?: number | null;
+    timezone?: string | null;
+    tax_province?: string | null;
+    primary_contact_name?: string | null;
+    primary_contact_email?: string | null;
+    primary_contact_phone?: string | null;
+    public_email?: string | null;
+    public_phone?: string | null;
+    public_website?: string | null;
+    public_instagram?: string | null;
+    public_address?: string | null;
+    public_message?: string | null;
+    public_booking_enabled?: boolean | null;
+    stripe_connect_account_id?: string | null;
+    stripe_connect_status?: string | null;
+    interac_email?: string | null;
     created_at: string;
+    updated_at: string;
 }
 
 export interface Profile {
