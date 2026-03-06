@@ -48,13 +48,13 @@ export default function Navbar() {
                 {/* Desktop CTA */}
                 <div className="hidden md:flex items-center gap-2">
                     <Link
-                        href="/admin"
+                        href="/en/auth/login"
                         className="h-9 px-4 rounded-lg text-sm font-medium text-tertiary border border-tertiary/50 hover:bg-background transition-colors duration-200 flex items-center"
                     >
                         Login
                     </Link>
                     <Link
-                        href="/signup"
+                        href="/en/auth/signup"
                         className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-dark transition-colors duration-200 flex items-center"
                     >
                         Sign Up Free
@@ -86,13 +86,13 @@ export default function Navbar() {
                     ))}
                     <div className="flex flex-col gap-2 pt-2">
                         <Link
-                            href="/admin"
+                            href="/en/auth/login"
                             className="h-9 px-4 rounded-lg text-sm font-medium text-tertiary border border-tertiary/50 text-center flex items-center justify-center"
                         >
                             Login
                         </Link>
                         <Link
-                            href="/signup"
+                            href="/en/auth/signup"
                             className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-primary text-center flex items-center justify-center"
                         >
                             Sign Up Free
