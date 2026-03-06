@@ -54,16 +54,16 @@ export default function SecurityPage() {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen bg-[#EEF0EE]">
+            <main className="min-h-screen bg-background">
                 <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
                     <div className="text-center space-y-3 mb-14">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#2D523E]/10 mb-2">
-                            <ShieldCheck size={24} className="text-[#2D523E]" />
+                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 mb-2">
+                            <ShieldCheck size={24} className="text-primary" />
                         </div>
-                        <h1 className="text-3xl font-semibold text-[#081C15]">
+                        <h1 className="text-3xl font-semibold text-foreground">
                             Security at StayBooked.ca
                         </h1>
-                        <p className="text-sm text-[#5D6D63] max-w-xl mx-auto leading-relaxed">
+                        <p className="text-sm text-tertiary max-w-xl mx-auto leading-relaxed">
                             We treat your business data and your clients&apos; privacy with the utmost seriousness. Here is exactly how we protect it.
                         </p>
                     </div>
@@ -75,24 +75,24 @@ export default function SecurityPage() {
                                 key={title}
                                 className="bg-white rounded-xl border border-slate-100 p-6 space-y-3"
                             >
-                                <div className="w-9 h-9 rounded-lg bg-[#2D523E]/10 flex items-center justify-center">
-                                    <Icon size={18} className="text-[#2D523E]" />
+                                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <Icon size={18} className="text-primary" />
                                 </div>
-                                <h2 className="text-sm font-semibold text-[#081C15]">{title}</h2>
-                                <p className="text-sm text-[#5D6D63] leading-relaxed">{body}</p>
+                                <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+                                <p className="text-sm text-tertiary leading-relaxed">{body}</p>
                             </div>
                         ))}
                     </div>
 
                     {/* Additional practices */}
                     <div className="bg-white rounded-xl border border-slate-100 p-6 space-y-4">
-                        <h2 className="text-sm font-semibold text-[#081C15]">
+                        <h2 className="text-sm font-semibold text-foreground">
                             Additional Security Practices
                         </h2>
                         <ul className="space-y-2">
                             {practices.map((p) => (
-                                <li key={p} className="flex items-start gap-2 text-sm text-[#5D6D63]">
-                                    <ShieldCheck size={14} className="text-[#16A34A] mt-0.5 shrink-0" />
+                                <li key={p} className="flex items-start gap-2 text-sm text-tertiary">
+                                    <ShieldCheck size={14} className="text-success mt-0.5 shrink-0" />
                                     {p}
                                 </li>
                             ))}
@@ -100,11 +100,11 @@ export default function SecurityPage() {
                     </div>
 
                     {/* Disclosure */}
-                    <div className="mt-8 rounded-xl border border-[#9BA894] bg-[#E6ECEA] p-5">
-                        <p className="text-sm text-[#5D6D63] leading-relaxed">
-                            <span className="font-medium text-[#2D523E]">Responsible Disclosure:</span>{" "}
+                    <div className="mt-8 rounded-xl border border-secondary bg-secondary/10 p-5">
+                        <p className="text-sm text-tertiary leading-relaxed">
+                            <span className="font-medium text-primary">Responsible Disclosure:</span>{" "}
                             If you discover a potential security vulnerability in our platform, please report it responsibly to{" "}
-                            <a href="mailto:security@staybooked.ca" className="text-[#2D523E] hover:underline">
+                            <a href="mailto:security@staybooked.ca" className="text-primary hover:underline">
                                 security@staybooked.ca
                             </a>
                             . We commit to responding within 48 hours and to working collaboratively toward a resolution.

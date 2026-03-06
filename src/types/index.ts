@@ -27,7 +27,8 @@ export interface Service {
     description?: string;
     duration_minutes: number;
     price: number;
-    is_active: boolean;
+    deposit_percentage?: 10 | 25 | 50 | 100 | null;
+    is_paused: boolean;
     created_at: string;
 }
 

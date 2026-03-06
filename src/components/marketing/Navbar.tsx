@@ -7,12 +7,12 @@ import { Menu, X } from "lucide-react";
 function Logo() {
     return (
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <span className="w-9 h-9 rounded-lg bg-[#2D523E] flex items-center justify-center text-white font-bold text-lg leading-none select-none">
+            <span className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg leading-none select-none">
                 S
             </span>
-            <span className="text-base font-semibold tracking-tight text-[#081C15]">
-                Stay<span className="font-bold text-[#2D523E]">Booked</span>
-                <span className="text-[#94A3B8]">.ca</span>
+            <span className="text-base font-semibold tracking-tight text-foreground">
+                Stay<span className="font-bold text-primary">Booked</span>
+                <span className="text-slate-400">.ca</span>
             </span>
         </Link>
     );
@@ -38,7 +38,7 @@ export default function Navbar() {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className="text-sm text-[#5D6D63] hover:text-[#2D523E] transition-colors duration-200"
+                            className="text-sm text-tertiary hover:text-primary transition-colors duration-200"
                         >
                             {link.label}
                         </Link>
@@ -49,13 +49,13 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-2">
                     <Link
                         href="/admin"
-                        className="h-9 px-4 rounded-lg text-sm font-medium text-[#5D6D63] border border-[#5D6D63] hover:bg-[#F8FAFC] transition-colors duration-200 flex items-center"
+                        className="h-9 px-4 rounded-lg text-sm font-medium text-tertiary border border-tertiary/50 hover:bg-background transition-colors duration-200 flex items-center"
                     >
                         Login
                     </Link>
                     <Link
                         href="/signup"
-                        className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-[#2D523E] hover:bg-[#1E392A] transition-colors duration-200 flex items-center"
+                        className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-primary hover:bg-primary-dark transition-colors duration-200 flex items-center"
                     >
                         Sign Up Free
                     </Link>
@@ -63,7 +63,7 @@ export default function Navbar() {
 
                 {/* Mobile hamburger */}
                 <button
-                    className="md:hidden p-2 text-[#5D6D63]"
+                    className="md:hidden p-2 text-tertiary"
                     onClick={() => setOpen(!open)}
                     aria-label={open ? "Close menu" : "Open menu"}
                 >
@@ -79,7 +79,7 @@ export default function Navbar() {
                             key={link.href}
                             href={link.href}
                             onClick={() => setOpen(false)}
-                            className="block text-sm text-[#5D6D63] hover:text-[#2D523E] py-1"
+                            className="block text-sm text-tertiary hover:text-primary py-1"
                         >
                             {link.label}
                         </Link>
@@ -87,13 +87,13 @@ export default function Navbar() {
                     <div className="flex flex-col gap-2 pt-2">
                         <Link
                             href="/admin"
-                            className="h-9 px-4 rounded-lg text-sm font-medium text-[#5D6D63] border border-[#5D6D63] text-center flex items-center justify-center"
+                            className="h-9 px-4 rounded-lg text-sm font-medium text-tertiary border border-tertiary/50 text-center flex items-center justify-center"
                         >
                             Login
                         </Link>
                         <Link
                             href="/signup"
-                            className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-[#2D523E] text-center flex items-center justify-center"
+                            className="h-9 px-4 rounded-lg text-sm font-medium text-white bg-primary text-center flex items-center justify-center"
                         >
                             Sign Up Free
                         </Link>

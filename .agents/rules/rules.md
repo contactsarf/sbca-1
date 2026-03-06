@@ -50,6 +50,8 @@ trigger: always_on
 - Warning: `#F59E0B`.
 - Danger: `#DC2626`.
 
+- Always use the stanard color variables from themes, donot ever use raw color codes in the pages such as bg-[#1F6F8B]
+
 ## Design principles
 - Clean spacing.
 - Mobile-first.
@@ -74,31 +76,7 @@ Mobile:
 - Hamburger menu
 - Slide-out sidebar
 
-## Spacing scale (Tailwind)
-- xs: 4px (gap-1, p-1)
-- sm: 8px (gap-2, p-2)
-- md: 16px (gap-4, p-4)
-- lg: 24px (gap-6, p-6)
-- xl: 32px (gap-8, p-8)
-- Container padding: px-4 mobile, px-6 tablet, px-8 desktop
-- Section spacing: space-y-6 for forms, space-y-8 for page sections
-
-## Typography scale
-- Display: text-4xl font-bold (Hero headings)
-- H1: text-3xl font-semibold
-- H2: text-2xl font-semibold
-- H3: text-xl font-medium
-- Body: text-base (16px)
-- Small: text-sm (14px)
-- Caption: text-xs (12px)
-- Line-height: leading-tight for headings, leading-relaxed for body
 
 ## Component standards
-
-### Button standards
-- Primary: bg-[#1F6F8B] text-white hover:bg-[#164F63] h-10 px-4 rounded-lg
-- Secondary: bg-[#7ED6C3] text-[#475569] hover:bg-[#6BC5B2] h-10 px-4 rounded-lg
-- Ghost: bg-transparent border border-[#475569] hover:bg-[#F8FAFC] h-10 px-4 rounded-lg
-- Danger: bg-[#DC2626] text-white hover:bg-[#B91C1C] h-10 px-4 rounded-lg
-- Disabled: opacity-50 cursor-not-allowed
 - All buttons: font-medium transition-colors duration-200
+- All buttons and page elemenst should use standard and unifor sizes

@@ -1,0 +1,20 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/.next": true,
+        "**/package-lock.json": true,
+        "**/next-env.d.ts": true,
+        "**/.env.local": false,
+        "**/postcss.config.mjs": true,
+        "**/tailwind.config.ts": false,
+        "**/tsconfig.json": false
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "**/.next/**": true
+    }
+}

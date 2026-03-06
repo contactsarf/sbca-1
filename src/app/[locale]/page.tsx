@@ -47,15 +47,15 @@ function Hero() {
                 <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
                     {/* Copy */}
                     <div className="flex-1 text-center lg:text-left space-y-8 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-[#9BA894] bg-[#E6ECEA] px-4 py-1.5 text-xs font-semibold text-[#2D523E] shadow-sm">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-secondary bg-secondary/10 px-4 py-1.5 text-xs font-semibold text-primary shadow-sm">
                             <Sparkles size={14} className="animate-pulse" />
                             No monthly fees — ever
                         </div>
-                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-[#081C15] leading-[1.1] tracking-tight">
+                        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground leading-[1.1] tracking-tight">
                             Never Miss a{" "}
-                            <span className="text-[#2D523E]">Booking Again</span>
+                            <span className="text-primary">Booking Again</span>
                         </h1>
-                        <p className="text-lg text-[#5D6D63] leading-relaxed max-w-lg mx-auto lg:mx-0">
+                        <p className="text-lg text-tertiary leading-relaxed max-w-lg mx-auto lg:mx-0">
                             The simplest way to take online bookings for your service
                             business. Multi-staff scheduling, group bookings, deposits, and
                             powerful reports — all with no monthly fees.
@@ -63,26 +63,26 @@ function Hero() {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
                             <Link
                                 href="/signup"
-                                className="h-12 px-8 rounded-xl text-sm font-bold text-white bg-[#2D523E] hover:bg-[#1E392A] shadow-lg shadow-[#2D523E]/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
+                                className="h-12 px-8 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                             >
                                 Get Started for Free
                                 <ArrowRight size={18} />
                             </Link>
                             <Link
                                 href="/#features"
-                                className="h-12 px-8 rounded-xl text-sm font-bold text-[#5D6D63] border-2 border-[#E2E8F0] hover:border-[#CBD5E1] hover:bg-[#EEF0EE] transition-all duration-200 flex items-center justify-center"
+                                className="h-12 px-8 rounded-xl text-sm font-bold text-tertiary border-2 border-slate-200 hover:border-slate-300 hover:bg-background transition-all duration-200 flex items-center justify-center"
                             >
                                 See Features
                             </Link>
                         </div>
-                        <p className="text-xs font-medium text-[#94A3B8] tracking-wide uppercase">
+                        <p className="text-xs font-medium text-slate-400 tracking-wide uppercase">
                             No credit card required &middot; Setup in 5 minutes
                         </p>
                     </div>
 
                     {/* Hero image */}
                     <div className="flex-1 w-full relative">
-                        <div className="absolute -inset-4 bg-[#9BA894]/20 rounded-[2.5rem] blur-2xl lg:-rotate-2"></div>
+                        <div className="absolute -inset-4 bg-secondary/20 rounded-[2.5rem] blur-2xl lg:-rotate-2"></div>
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 lg:rotate-1">
                             <Image
                                 src="/hero.png"
@@ -109,13 +109,13 @@ function Purpose() {
     ];
 
     return (
-        <section className="bg-[#EEF0EE] py-24 sm:py-32 border-y border-slate-100">
+        <section className="bg-background py-24 sm:py-32 border-y border-slate-100">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="max-w-3xl mx-auto text-center space-y-4 mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#081C15] tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                         Built for Businesses That Run on Appointments
                     </h2>
-                    <p className="text-base text-[#5D6D63] leading-relaxed">
+                    <p className="text-base text-tertiary leading-relaxed">
                         Phone-tag, no-shows, and manual scheduling cost you hours every
                         week. StayBooked puts your booking page online in minutes, reminds
                         your clients automatically, and keeps every detail organized — so
@@ -128,10 +128,10 @@ function Purpose() {
                     {stats.map((s) => (
                         <div
                             key={s.value}
-                            className="bg-white rounded-2xl border border-slate-200 p-8 text-center shadow-sm hover:shadow-md hover:border-[#9BA894]/50 transition-all duration-200"
+                            className="bg-white rounded-2xl border border-slate-200 p-8 text-center shadow-sm hover:shadow-md hover:border-secondary/50 transition-all duration-200"
                         >
-                            <p className="text-4xl font-extrabold text-[#2D523E] tracking-tight">{s.value}</p>
-                            <p className="text-sm font-semibold text-[#5D6D63] mt-2">{s.label}</p>
+                            <p className="text-4xl font-extrabold text-primary tracking-tight">{s.value}</p>
+                            <p className="text-sm font-semibold text-tertiary mt-2">{s.label}</p>
                         </div>
                     ))}
                 </div>
@@ -160,14 +160,14 @@ function Purpose() {
                             key={item.problem}
                             className="bg-white rounded-2xl border border-slate-200 p-6 flex gap-5 items-start shadow-sm"
                         >
-                            <div className="mt-1 shrink-0 bg-[#16A34A]/10 p-1.5 rounded-lg text-[#16A34A]">
+                            <div className="mt-1 shrink-0 bg-success/10 p-1.5 rounded-lg text-success">
                                 <CheckCircle2 size={24} />
                             </div>
                             <div className="space-y-1">
-                                <p className="text-sm text-[#94A3B8] line-through font-medium leading-none">
+                                <p className="text-sm text-slate-400 line-through font-medium leading-none">
                                     {item.problem}
                                 </p>
-                                <p className="text-base text-[#081C15] font-bold tracking-tight">
+                                <p className="text-base text-foreground font-bold tracking-tight">
                                     {item.solution}
                                 </p>
                             </div>
@@ -196,10 +196,10 @@ function ClientSegments() {
         <section className="bg-white py-24 sm:py-32">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center space-y-4 mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#081C15] tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                         Made for Every Service Business
                     </h2>
-                    <p className="text-base text-[#5D6D63] max-w-2xl mx-auto">
+                    <p className="text-base text-tertiary max-w-2xl mx-auto">
                         If your business runs on appointments, StayBooked was built for you. Join businesses of all sizes streamlining their operations.
                     </p>
                 </div>
@@ -207,12 +207,12 @@ function ClientSegments() {
                     {segments.map(({ icon: Icon, label }) => (
                         <div
                             key={label}
-                            className="group flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-[#EEF0EE] p-8 hover:border-[#9BA894] hover:bg-[#E6ECEA] hover:shadow-lg hover:shadow-[#9BA894]/10 hover:-translate-y-1 transition-all duration-300"
+                            className="group flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-background p-8 hover:border-secondary hover:bg-secondary/10 hover:shadow-lg hover:shadow-secondary/10 hover:-translate-y-1 transition-all duration-300"
                         >
-                            <div className="w-14 h-14 rounded-xl bg-[#2D523E]/5 flex items-center justify-center group-hover:bg-[#2D523E] transition-colors duration-300">
-                                <Icon size={28} className="text-[#2D523E] group-hover:text-white transition-colors duration-300" />
+                            <div className="w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center group-hover:bg-primary transition-colors duration-300">
+                                <Icon size={28} className="text-primary group-hover:text-white transition-colors duration-300" />
                             </div>
-                            <p className="text-sm font-bold text-[#081C15] text-center tracking-tight">
+                            <p className="text-sm font-bold text-foreground text-center tracking-tight">
                                 {label}
                             </p>
                         </div>
@@ -300,13 +300,13 @@ const comingSoon = [
 
 function Features() {
     return (
-        <section id="features" className="bg-[#EEF0EE] py-24 sm:py-32 border-y border-slate-100">
+        <section id="features" className="bg-background py-24 sm:py-32 border-y border-slate-100">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center space-y-4 mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#081C15] tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                         Everything You Need, Nothing You Don&apos;t
                     </h2>
-                    <p className="text-base text-[#5D6D63]">
+                    <p className="text-base text-tertiary">
                         All features included — no add-ons, no tiers, no surprises.
                     </p>
                 </div>
@@ -314,14 +314,14 @@ function Features() {
                     {features.map(({ icon: Icon, title, desc }) => (
                         <div
                             key={title}
-                            className="group bg-white rounded-2xl border border-slate-200 p-6 flex gap-5 items-start hover:border-[#9BA894] hover:shadow-xl hover:shadow-[#081C15]/5 hover:-translate-y-0.5 transition-all duration-300"
+                            className="group bg-white rounded-2xl border border-slate-200 p-6 flex gap-5 items-start hover:border-secondary hover:shadow-xl hover:shadow-foreground/5 hover:-translate-y-0.5 transition-all duration-300"
                         >
-                            <div className="mt-0.5 shrink-0 w-12 h-12 rounded-xl bg-[#2D523E]/5 group-hover:bg-[#2D523E]/10 flex items-center justify-center transition-colors duration-300">
-                                <Icon size={24} className="text-[#2D523E]" />
+                            <div className="mt-0.5 shrink-0 w-12 h-12 rounded-xl bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center transition-colors duration-300">
+                                <Icon size={24} className="text-primary" />
                             </div>
                             <div className="space-y-1.5">
-                                <p className="text-base font-bold text-[#081C15] tracking-tight">{title}</p>
-                                <p className="text-sm text-[#5D6D63] leading-relaxed">
+                                <p className="text-base font-bold text-foreground tracking-tight">{title}</p>
+                                <p className="text-sm text-tertiary leading-relaxed">
                                     {desc}
                                 </p>
                             </div>
@@ -330,12 +330,12 @@ function Features() {
                 </div>
 
                 {/* Coming soon */}
-                <div className="rounded-3xl border-2 border-dashed border-[#9BA894]/30 bg-[#E6ECEA] p-8 sm:p-12 relative overflow-hidden">
+                <div className="rounded-3xl border-2 border-dashed border-secondary/30 bg-secondary/10 p-8 sm:p-12 relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10">
-                        <Sparkles size={120} className="text-[#2D523E]" />
+                        <Sparkles size={120} className="text-primary" />
                     </div>
                     <div className="relative z-10">
-                        <p className="text-xs font-bold text-[#2D523E] uppercase tracking-[0.2em] mb-6">
+                        <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mb-6">
                             Coming in the Next Release
                         </p>
                         <div className="flex flex-wrap gap-4">
@@ -344,8 +344,8 @@ function Features() {
                                     key={title}
                                     className="flex items-center gap-3 rounded-xl bg-white border border-slate-200 px-5 py-3 shadow-sm hover:shadow-md transition-shadow duration-200"
                                 >
-                                    <Icon size={18} className="text-[#2D523E]" />
-                                    <span className="text-sm font-bold text-[#5D6D63]">{title}</span>
+                                    <Icon size={18} className="text-primary" />
+                                    <span className="text-sm font-bold text-tertiary">{title}</span>
                                 </div>
                             ))}
                         </div>
@@ -371,27 +371,27 @@ function Pricing() {
         <section id="pricing" className="bg-white py-24 sm:py-32">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center space-y-4 mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#081C15] tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                         One Plan. One Price.
                     </h2>
-                    <p className="text-base text-[#5D6D63]">
+                    <p className="text-base text-tertiary">
                         Only pay when you get bookings. Zero when business is slow.
                     </p>
                 </div>
                 <div className="mx-auto max-w-md">
-                    <div className="rounded-[2.5rem] border-4 border-[#2D523E] bg-white p-10 sm:p-12 shadow-[0_32px_64px_-16px_rgba(45,82,62,0.15)] text-center space-y-10 relative">
-                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#2D523E] text-white text-[10px] font-bold uppercase tracking-[0.25em] px-6 py-2 rounded-full shadow-lg">
+                    <div className="rounded-[2.5rem] border-4 border-primary bg-white p-10 sm:p-12 shadow-[0_32px_64px_-16px_rgba(45,82,62,0.15)] text-center space-y-10 relative">
+                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold uppercase tracking-[0.25em] px-6 py-2 rounded-full shadow-lg">
                             Most Transparent
                         </div>
 
                         <div className="space-y-2">
-                            <div className="flex items-start justify-center text-[#081C15]">
+                            <div className="flex items-start justify-center text-foreground">
                                 <p className="text-6xl sm:text-7xl font-black tracking-tighter">
                                     29<span className="text-3xl sm:text-4xl">¢</span>
                                 </p>
                             </div>
-                            <p className="text-base font-bold text-[#5D6D63] uppercase tracking-wide">per booking</p>
-                            <p className="text-xs font-semibold text-[#94A3B8] max-w-[240px] mx-auto">
+                            <p className="text-base font-bold text-tertiary uppercase tracking-wide">per booking</p>
+                            <p className="text-xs font-semibold text-slate-400 max-w-[240px] mx-auto">
                                 Billed at month-end &mdash; zero if no bookings
                             </p>
                         </div>
@@ -399,8 +399,8 @@ function Pricing() {
                         <div className="border-t border-slate-100 pt-10">
                             <ul className="space-y-4 text-left">
                                 {pricingPerks.map((p) => (
-                                    <li key={p} className="flex items-center gap-3 text-sm font-semibold text-[#5D6D63]">
-                                        <div className="bg-[#16A34A] text-white p-0.5 rounded-full shadow-sm">
+                                    <li key={p} className="flex items-center gap-3 text-sm font-semibold text-tertiary">
+                                        <div className="bg-success text-white p-0.5 rounded-full shadow-sm">
                                             <CheckCircle2 size={16} />
                                         </div>
                                         {p}
@@ -412,12 +412,12 @@ function Pricing() {
                         <div className="space-y-4 pt-4">
                             <Link
                                 href="/signup"
-                                className="block h-14 rounded-2xl text-base font-bold text-white bg-[#2D523E] hover:bg-[#1E392A] shadow-lg shadow-[#2D523E]/25 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
+                                className="block h-14 rounded-2xl text-base font-bold text-white bg-primary hover:bg-primary-dark shadow-lg shadow-primary/25 hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2"
                             >
                                 Get Started for Free
                                 <ArrowRight size={20} />
                             </Link>
-                            <p className="text-xs font-bold text-[#94A3B8] uppercase tracking-widest">No credit card required</p>
+                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No credit card required</p>
                         </div>
                     </div>
                 </div>
@@ -450,13 +450,13 @@ const testimonials = [
 
 function Testimonials() {
     return (
-        <section className="bg-[#EEF0EE] py-24 sm:py-32 border-y border-slate-100">
+        <section className="bg-background py-24 sm:py-32 border-y border-slate-100">
             <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div className="text-center space-y-4 mb-16">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-[#081C15] tracking-tight">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
                         Loved by Service Businesses Across Canada
                     </h2>
-                    <p className="text-base text-[#5D6D63]">
+                    <p className="text-base text-tertiary">
                         Real feedback from entrepreneurs like you.
                     </p>
                 </div>
@@ -464,27 +464,27 @@ function Testimonials() {
                     {testimonials.map((t) => (
                         <div
                             key={t.name}
-                            className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-sm hover:shadow-xl hover:border-[#9BA894]/30 transition-all duration-300"
+                            className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-sm hover:shadow-xl hover:border-secondary/30 transition-all duration-300"
                         >
                             <div className="flex gap-1">
                                 {[...Array(5)].map((_, i) => (
                                     <Star
                                         key={i}
                                         size={18}
-                                        className="text-[#F59E0B] fill-[#F59E0B]"
+                                        className="text-warning fill-warning"
                                     />
                                 ))}
                             </div>
-                            <p className="text-base text-[#5D6D63] leading-relaxed italic">
+                            <p className="text-base text-tertiary leading-relaxed italic">
                                 &ldquo;{t.quote}&rdquo;
                             </p>
                             <div className="flex items-center gap-4 pt-4 border-t border-slate-50">
-                                <div className="w-10 h-10 rounded-full bg-[#2D523E]/10 flex items-center justify-center text-[#2D523E] font-bold">
+                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                                     {t.name.charAt(0)}
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-[#081C15]">{t.name}</p>
-                                    <p className="text-xs font-semibold text-[#94A3B8]">{t.role}</p>
+                                    <p className="text-sm font-bold text-foreground">{t.name}</p>
+                                    <p className="text-xs font-semibold text-slate-400">{t.role}</p>
                                 </div>
                             </div>
                         </div>
@@ -498,31 +498,31 @@ function Testimonials() {
 /* ─────────────────────────── CTA BANNER ─────────────────────────── */
 function CtaBanner() {
     return (
-        <section className="bg-[#2D523E] py-24 relative overflow-hidden">
+        <section className="bg-primary py-24 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
                 <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#9BA894] rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
             </div>
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center space-y-10 relative z-10">
                 <div className="space-y-4">
                     <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight">
                         Ready to Fill Your Schedule?
                     </h2>
-                    <p className="text-lg text-[#D1D9D1] font-medium">
+                    <p className="text-lg text-secondary/60 font-medium">
                         Join hundreds of service businesses already using StayBooked.ca
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <Link
                         href="/signup"
-                        className="h-14 px-12 rounded-2xl text-base font-bold text-[#2D523E] bg-white hover:bg-[#EEF0EE] shadow-xl shadow-black/10 hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
+                        className="h-14 px-12 rounded-2xl text-base font-bold text-primary bg-white hover:bg-background shadow-xl shadow-black/10 hover:-translate-y-1 transition-all duration-200 flex items-center justify-center gap-2"
                     >
                         Get Started for Free
                         <ArrowRight size={20} />
                     </Link>
                     <Link
                         href="/pricing"
-                        className="text-white hover:text-[#D1D9D1] font-bold text-base transition-colors duration-200"
+                        className="text-white hover:text-secondary/60 font-bold text-base transition-colors duration-200"
                     >
                         View Full Pricing Details
                     </Link>

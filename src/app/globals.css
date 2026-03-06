@@ -2,13 +2,13 @@
 
 @theme inline {
   /* Brand Colors */
-  --color-primary: #2D523E;
-  --color-primary-dark: #1E392A;
-  --color-secondary: #9BA894;
-  --color-secondary-dark: #8B9A82;
-  --color-tertiary: #5D6D63;
-  --color-background: #EEF0EE;
-  --color-foreground: #081C15;
+  --color-primary: #1F6F8B;
+  --color-primary-dark: #164F63;
+  --color-secondary: #7ED6C3;
+  --color-secondary-dark: #66B2A2;
+  --color-tertiary: #475569;
+  --color-background: #F8FAFC;
+  --color-foreground: #0F172A;
 
   /* Semantic */
   --color-success: #16A34A;

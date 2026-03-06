@@ -74,23 +74,23 @@ export default function TermsPage() {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen bg-[#EEF0EE]">
+            <main className="min-h-screen bg-background">
                 <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
                     <div className="mb-10 space-y-2">
-                        <h1 className="text-3xl font-semibold text-[#081C15]">
+                        <h1 className="text-3xl font-semibold text-foreground">
                             Terms of Service
                         </h1>
-                        <p className="text-xs text-[#94A3B8]">
+                        <p className="text-xs text-slate-400">
                             Last updated: March 2025 &middot; Effective immediately
                         </p>
                     </div>
                     <div className="space-y-8">
                         {sections.map((s) => (
                             <div key={s.heading} className="space-y-2">
-                                <h2 className="text-base font-semibold text-[#081C15]">
+                                <h2 className="text-base font-semibold text-foreground">
                                     {s.heading}
                                 </h2>
-                                <p className="text-sm text-[#5D6D63] leading-relaxed">{s.body}</p>
+                                <p className="text-sm text-tertiary leading-relaxed">{s.body}</p>
                             </div>
                         ))}
                     </div>

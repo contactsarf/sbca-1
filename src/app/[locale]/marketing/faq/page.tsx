@@ -113,15 +113,15 @@ export default function FaqPage() {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen bg-[#EEF0EE]">
+            <main className="min-h-screen bg-background">
                 <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
                     <div className="text-center space-y-2 mb-12">
-                        <h1 className="text-3xl font-semibold text-[#081C15]">
+                        <h1 className="text-3xl font-semibold text-foreground">
                             Frequently Asked Questions
                         </h1>
-                        <p className="text-sm text-[#5D6D63]">
+                        <p className="text-sm text-tertiary">
                             Can&apos;t find what you&apos;re looking for?{" "}
-                            <Link href="mailto:hello@staybooked.ca" className="text-[#2D523E] hover:underline">
+                            <Link href="mailto:hello@staybooked.ca" className="text-primary hover:underline">
                                 Contact us
                             </Link>
                         </p>
@@ -130,7 +130,7 @@ export default function FaqPage() {
                     <div className="space-y-10">
                         {faqs.map((section) => (
                             <div key={section.category}>
-                                <h2 className="text-xs font-semibold uppercase tracking-widest text-[#2D523E] mb-4">
+                                <h2 className="text-xs font-semibold uppercase tracking-widest text-primary mb-4">
                                     {section.category}
                                 </h2>
                                 <div className="space-y-3">
@@ -139,10 +139,10 @@ export default function FaqPage() {
                                             key={item.q}
                                             className="bg-white rounded-xl border border-slate-100 p-5 space-y-2"
                                         >
-                                            <p className="text-sm font-medium text-[#081C15]">
+                                            <p className="text-sm font-medium text-foreground">
                                                 {item.q}
                                             </p>
-                                            <p className="text-sm text-[#5D6D63] leading-relaxed">
+                                            <p className="text-sm text-tertiary leading-relaxed">
                                                 {item.a}
                                             </p>
                                         </div>
