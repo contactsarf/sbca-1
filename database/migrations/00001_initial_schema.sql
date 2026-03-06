@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS public.services (
     tenant_id UUID REFERENCES public.tenant(id) ON DELETE CASCADE NOT NULL,
     name TEXT NOT NULL,
     description TEXT,
+    prep_notes TEXT,
     duration_minutes INT NOT NULL CHECK (duration_minutes > 0),
     price DECIMAL(10, 2) NOT NULL CHECK (price >= 0),
     deposit_percentage INT CHECK (deposit_percentage IN (10, 25, 50, 100)),

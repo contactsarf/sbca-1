@@ -39,6 +39,8 @@ export default async function AdminLayout({
 
     const locale = await getLocale();
     const tenantName = profile.tenant?.name || "StayBooked";
+    const tenantSlug = profile.tenant?.slug || "";
+    const bookingPageHref = `/booking/${tenantSlug}`;
 
     const navItems: NavItem[] = [
         { label: "Dashboard", href: `/${locale}/admin/dashboard`, iconName: "LayoutDashboard" },
@@ -61,9 +63,14 @@ export default async function AdminLayout({
                             Stay<span className="text-secondary">Booked</span>
                         </span>
                     </div>
-                    <div className="mt-4 text-xs font-medium text-secondary uppercase tracking-wider truncate">
+                    <Link
+                        href={bookingPageHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 inline-block text-xs font-medium text-secondary uppercase tracking-wider truncate hover:text-white transition-colors"
+                    >
                         {tenantName}
-                    </div>
+                    </Link>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -84,7 +91,7 @@ export default async function AdminLayout({
             </aside>
 
             {/* Mobile & Tablet Top Nav */}
-            <AdminNavbar navItems={navItems} tenantName={tenantName} locale={locale} />
+            <AdminNavbar navItems={navItems} tenantName={tenantName} locale={locale} tenantSlug={tenantSlug} />
 
             {/* Main Content Area */}
             <main className="lg:ml-64 flex-1">

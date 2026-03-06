@@ -43,6 +43,7 @@ export interface Service {
     tenant_id: string;
     name: string;
     description?: string;
+    prep_notes?: string | null;
     duration_minutes: number;
     price: number;
     deposit_percentage?: 10 | 25 | 50 | 100 | null;

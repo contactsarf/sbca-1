@@ -4,9 +4,14 @@
 
 ### All files for this section should reside in (src/app/[locale]/booking/) folder in the source code 
 
-1. This page is mobile first, best in-class, light-weight, attractive. 
-2. The tenant organization name and logo should be displayed prominently 
-3. Option to book a service by providing the booking details as below. 
+1. This page should be designed  mobile first but also be responsive and accomodate tablets and desktops sizes gracefully., 
+and this page should be best in-class, light-weight, attractive as this is public facing page and can make or break the business and the credibility
+
+2. The business organization (tenant) name and logo should be displayed prominently 
+ if the public booking on off swicth is off , we will show that the bookign page is temporarily not avilable but you can contact us at the below, and then show the address, phone, email, website, instagram information.
+
+3.When the bookign enabled switch in the tenants table is on then show the bookign options as follows - 
+    Option to book a service by providing the booking details as below. 
     1. Name of the person booking a service 
     2. An option to add more names and remove added names easily 
     3. Select the services from a list of services, organized cleanly and neatly by service types if available, the information shown should consists of The service name, service(prerequisites or preparations client should be aware of) the service duration the price, any deposit % if required (converted into amount) required for booking this service. 

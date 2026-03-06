@@ -38,11 +38,13 @@ interface AdminNavbarProps {
     navItems: NavItem[];
     tenantName: string;
     locale: string;
+    tenantSlug: string;
 }
 
-export default function AdminNavbar({ navItems, tenantName, locale }: AdminNavbarProps) {
+export default function AdminNavbar({ navItems, tenantName, locale, tenantSlug }: AdminNavbarProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const pathname = usePathname();
+    const bookingPageHref = `/booking/${tenantSlug}`;
 
     const isActive = (href: string) => {
         // Check if pathname starts with the href or is exactly the href
@@ -75,9 +77,14 @@ export default function AdminNavbar({ navItems, tenantName, locale }: AdminNavba
                     </div>
 
                     {/* Tenant Name — visible on all sizes */}
-                    <div className="text-xs font-medium text-secondary uppercase tracking-wider truncate max-w-[140px]">
+                    <Link
+                        href={bookingPageHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-secondary uppercase tracking-wider truncate max-w-[140px] hover:text-white transition-colors"
+                    >
                         {tenantName}
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Row 2: Tablet Navigation (Hidden on Mobile) */}
@@ -123,9 +130,15 @@ export default function AdminNavbar({ navItems, tenantName, locale }: AdminNavba
                 </div>
 
                 <div className="px-6 py-4">
-                    <div className="text-xs font-medium text-secondary uppercase tracking-wider truncate">
+                    <Link
+                        href={bookingPageHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-xs font-medium text-secondary uppercase tracking-wider truncate hover:text-white transition-colors"
+                    >
                         {tenantName}
-                    </div>
+                    </Link>
                 </div>
 
                 <nav className="flex-1 px-4 py-2 space-y-2 overflow-y-auto">

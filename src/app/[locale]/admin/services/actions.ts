@@ -53,6 +53,7 @@ export async function upsertService(formData: FormData, locale: string, id?: str
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
+    const prep_notes = formData.get("prep_notes") as string;
     const duration_minutes = parseInt(formData.get("duration_minutes") as string);
     const price = parseFloat(formData.get("price") as string);
     const deposit_percentage = formData.get("deposit_percentage") ? parseInt(formData.get("deposit_percentage") as string) : null;
@@ -65,6 +66,7 @@ export async function upsertService(formData: FormData, locale: string, id?: str
         tenant_id: profile.tenant_id,
         name,
         description,
+        prep_notes: prep_notes || null,
         duration_minutes,
         price,
         deposit_percentage,

@@ -182,6 +182,19 @@ export default function EditServicePage() {
                             />
                         </div>
 
+                        <div className="md:col-span-2">
+                            <label htmlFor="prep_notes" className="block text-sm font-semibold text-foreground mb-2">
+                                Appointment Preparation (notes for clients)
+                            </label>
+                            <textarea
+                                id="prep_notes"
+                                name="prep_notes"
+                                rows={3}
+                                defaultValue={service?.prep_notes ?? ""}
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                            />
+                        </div>
+
                         <div className="grid grid-cols-2 gap-6">
                             {/* Duration */}
                             <div>

@@ -91,10 +91,11 @@ export interface ClientInfo {
 // ============================================================
 
 export async function findAvailableSlots(
-    input: BookingEngineInput
+    input: BookingEngineInput,
+    supabaseClient?: any
 ): Promise<BookingEngineResult> {
     try {
-        const supabase = await createClient();
+        const supabase = supabaseClient ?? await createClient();
 
         // Step 1: Validate and fetch services
         const servicesResult = await fetchAndValidateServices(
