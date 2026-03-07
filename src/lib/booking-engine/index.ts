@@ -302,6 +302,51 @@ export async function upsertClient(
     }
 }
 
+/**
+ * Create a new booking
+ */
+export async function createBooking(
+    supabase: any,
+    bookingData: {
+        tenant_id: string;
+        client_id: string;
+        team_member_id: string;
+        booking_date: string;
+        start_time: string;
+        end_time: string;
+        status?: "pending" | "confirmed" | "cancelled" | "completed" | "no-show";
+        notes?: string;
+    }
+): Promise<{ success: boolean; bookingId?: string; error?: string }> {
+    try {
+        const { data, error } = await supabase
+            .from("bookings")
+            .insert({
+                ...bookingData,
+                status: bookingData.status || "confirmed"
+            })
+            .select("id")
+            .single();
+
+        if (error || !data) {
+            return {
+                success: false,
+                error: error?.message || "Error creating booking record."
+            };
+        }
+
+        return {
+            success: true,
+            bookingId: data.id
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: "Unexpected error during booking creation."
+        };
+    }
+}
+
 async function fetchAndValidateServices(
     supabase: any,
     tenantId: string,

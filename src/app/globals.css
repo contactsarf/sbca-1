@@ -38,3 +38,35 @@
     box-sizing: border-box;
   }
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(31, 111, 139, 0.1);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(31, 111, 139, 0.2);
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(12deg); }
+    50% { transform: translateY(-10px) rotate(15deg); }
+    100% { transform: translateY(0px) rotate(12deg); }
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}

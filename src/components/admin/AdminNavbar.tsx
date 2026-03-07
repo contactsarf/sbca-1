@@ -57,7 +57,7 @@ export default function AdminNavbar({ navItems, tenantName, locale, tenantSlug }
     return (
         <>
             {/* Tablet/Mobile Header */}
-            <header className="lg:hidden sticky top-0 z-40 w-full bg-foreground text-white border-b border-primary/20">
+            <header className="md:hidden sticky top-0 z-40 w-full bg-foreground text-white border-b border-primary/20">
                 {/* Row 1: Logo and Controls */}
                 <div className="flex items-center justify-between h-16 px-4 md:px-6">
                     <div className="flex items-center gap-3">
@@ -145,18 +145,22 @@ export default function AdminNavbar({ navItems, tenantName, locale, tenantSlug }
                     {navItems.map((item) => {
                         const Icon = iconMap[item.iconName];
                         return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex items-center gap-3 px-4 py-3.5 rounded-lg text-sm font-medium transition-all select-none active:scale-95 active:opacity-70 ${isActive(item.href)
-                                    ? "bg-primary/20 text-white"
-                                    : "text-secondary hover:text-white hover:bg-primary/10"
-                                    }`}
-                            >
-                                {Icon && <Icon className="w-5 h-5" />}
-                                {item.label}
-                            </Link>
+                            <div key={item.href} className="contents">
+                                <Link
+                                    href={item.href}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className={`flex items-center gap-3 px-4 py-3.5 rounded-lg text-sm font-medium transition-all select-none active:scale-95 active:opacity-70 ${isActive(item.href)
+                                        ? "bg-primary/20 text-white"
+                                        : "text-secondary hover:text-white hover:bg-primary/10"
+                                        }`}
+                                >
+                                    {Icon && <Icon className="w-5 h-5" />}
+                                    {item.label}
+                                </Link>
+                                {item.iconName === "Calendar" && (
+                                    <div className="my-2 h-px bg-primary/10 w-full" />
+                                )}
+                            </div>
                         );
                     })}
                 </nav>

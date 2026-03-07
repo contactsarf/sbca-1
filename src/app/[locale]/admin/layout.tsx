@@ -54,47 +54,57 @@ export default async function AdminLayout({
 
     return (
         <div className="min-h-screen bg-background">
-            {/* Desktop Sidebar (Fixed and Always Open) */}
-            <aside className="hidden lg:flex fixed left-0 top-0 h-full w-64 bg-foreground text-white flex-col z-50">
-                <div className="p-6 border-b border-primary/20">
-                    <div className="flex items-center gap-3">
+            {/* Sidebar (Tablet & Desktop) */}
+            <aside className="hidden md:flex fixed left-0 top-0 h-full bg-foreground text-white flex-col z-50 transition-all duration-300 w-24 lg:w-64">
+                <div className="p-4 lg:p-6 border-b border-primary/20">
+                    <div className="flex items-center gap-3 justify-center lg:justify-start">
                         {/* Two-tone wordmark */}
-                        <span className="font-bold text-lg tracking-tight">
-                            Stay<span className="text-secondary">Booked</span>
+                        <span className="font-bold text-lg tracking-tight whitespace-nowrap">
+                            S<span className="lg:hidden text-secondary">B</span>
+                            <span className="hidden lg:inline">tay<span className="text-secondary">Booked</span></span>
                         </span>
                     </div>
-                    <Link
-                        href={bookingPageHref}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 inline-block text-xs font-medium text-secondary uppercase tracking-wider truncate hover:text-white transition-colors"
-                    >
-                        {tenantName}
-                    </Link>
+                    <div className="hidden lg:block">
+                        <Link
+                            href={bookingPageHref}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-4 inline-block text-xs font-medium text-secondary uppercase tracking-wider truncate hover:text-white transition-colors"
+                        >
+                            {tenantName}
+                        </Link>
+                    </div>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <AdminSidebarNav navItems={navItems} />
+                <nav className="flex-1 p-2 lg:p-4 space-y-2 overflow-y-auto">
+                    {/* Multi-mode nav */}
+                    <div className="lg:hidden">
+                        <AdminSidebarNav navItems={navItems} isCondensed={true} />
+                    </div>
+                    <div className="hidden lg:block">
+                        <AdminSidebarNav navItems={navItems} isCondensed={false} />
+                    </div>
                 </nav>
 
-                <div className="p-4 border-t border-primary/20">
+                <div className="p-2 lg:p-4 border-t border-primary/20">
                     <form action="/auth/signout" method="post">
                         <button
                             type="submit"
-                            className="flex items-center gap-3 w-full px-4 py-3.5 rounded-lg text-sm font-medium text-secondary hover:text-white hover:bg-danger/10 hover:text-danger transition-colors group"
+                            className="flex items-center gap-3 w-full px-4 py-3.5 rounded-lg text-sm font-medium text-secondary hover:text-white hover:bg-danger/10 hover:text-danger transition-colors group justify-center lg:justify-start"
+                            title="Logout"
                         >
-                            <LogOut className="w-5 h-5" />
-                            Logout
+                            <LogOut className="w-5 h-5 flex-shrink-0" />
+                            <span className="hidden lg:inline">Logout</span>
                         </button>
                     </form>
                 </div>
             </aside>
 
-            {/* Mobile & Tablet Top Nav */}
+            {/* Mobile Top Nav (Visible only on small screens) */}
             <AdminNavbar navItems={navItems} tenantName={tenantName} locale={locale} tenantSlug={tenantSlug} />
 
             {/* Main Content Area */}
-            <main className="lg:ml-64 flex-1">
+            <main className="md:ml-24 lg:ml-64 flex-1">
                 <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
                     {children}
                 </div>

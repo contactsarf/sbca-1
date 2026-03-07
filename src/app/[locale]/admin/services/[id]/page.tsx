@@ -3,7 +3,7 @@
 import { useTransition, useState, useEffect } from "react";
 import { upsertService, getService, deleteService } from "../actions";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Info, Trash2 } from "lucide-react";
+import { ChevronLeft, Info, Trash2, FileText, HandCoins, Users, Activity, Check, Phone } from "lucide-react";
 import Link from "next/link";
 import { Service } from "@/types";
 import { DURATION_OPTIONS } from "@/constants/durations";
@@ -24,6 +24,7 @@ export default function EditServicePage() {
     const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([]);
     const [loadingTeamMembers, setLoadingTeamMembers] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [paymentsConfigured, setPaymentsConfigured] = useState(false);
     const params = useParams();
     const router = useRouter();
     const locale = params.locale as string;
@@ -46,9 +47,14 @@ export default function EditServicePage() {
     useEffect(() => {
         const fetchTeamMembers = async () => {
             const supabase = createClient();
-            const [{ data: membersData, error: membersError }, { data: mappingData, error: mappingError }] = await Promise.all([
+            const [
+                { data: membersData, error: membersError },
+                { data: mappingData, error: mappingError },
+                { data: tenantData }
+            ] = await Promise.all([
                 supabase.from("teams").select("id, name, avatar_url").order("name", { ascending: true }),
                 supabase.from("service_team_members").select("team_member_id").eq("service_id", id),
+                supabase.from("tenants").select("stripe_connect_status, interac_email").single()
             ]);
 
             if (membersError) {
@@ -62,6 +68,10 @@ export default function EditServicePage() {
             } else {
                 setSelectedTeamMembers((mappingData ?? []).map((row) => row.team_member_id));
             }
+
+            const hasStripe = tenantData?.stripe_connect_status === "active";
+            const hasInterac = !!tenantData?.interac_email;
+            setPaymentsConfigured(hasStripe || hasInterac);
 
             setLoadingTeamMembers(false);
         };
@@ -142,71 +152,84 @@ export default function EditServicePage() {
                 </button>
             </div>
 
-            <div className="relative bg-gradient-to-br from-white via-white to-primary/5 border border-primary/10 rounded-xl shadow-sm overflow-hidden">
-                {/* Gradient overlay in corner */}
-                <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-full pointer-events-none" />
-                
-                <div className="relative p-6 border-b border-primary/10 bg-primary/5">
-                    <h1 className="text-2xl font-semibold text-foreground">Edit Service</h1>
-                    <p className="text-sm text-tertiary">Update the details and configuration for this service.</p>
+            <div className="relative bg-white border border-primary/10 rounded-[40px] shadow-sm overflow-hidden translate-z-0">
+                <div className="relative p-6 border-b border-primary/10 bg-primary/5 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-2xl font-black text-primary tracking-tight">Edit Service</h1>
+                        <p className="text-sm text-tertiary font-medium">Configure your service details and preferences.</p>
+                    </div>
+                    <div className={`px-4 py-2 rounded-2xl border flex items-center gap-2 font-bold text-xs ${service?.is_paused ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>
+                        <div className={`w-2 h-2 rounded-full ${service?.is_paused ? "bg-amber-500 animate-pulse" : "bg-emerald-500"}`} />
+                        {service?.is_paused ? "Paused" : "Active"}
+                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="relative p-8 space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Service Name */}
-                        <div className="md:col-span-2">
-                            <label htmlFor="name" className="block text-sm font-semibold text-foreground mb-2">
-                                Service Name
-                            </label>
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                defaultValue={service?.name}
-                                required
-                                className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                            />
+                <form onSubmit={handleSubmit} className="relative p-8 space-y-12">
+                    {/* Section: General Details */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 pb-2 border-b border-primary/5">
+                            <div className="w-8 h-8 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                                <FileText className="w-4 h-4" />
+                            </div>
+                            <h2 className="font-black text-primary uppercase tracking-widest text-xs">General Details</h2>
                         </div>
 
-                        {/* Description */}
-                        <div className="md:col-span-2">
-                            <label htmlFor="description" className="block text-sm font-semibold text-foreground mb-2">
-                                Description
-                            </label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows={4}
-                                defaultValue={service?.description}
-                                className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                            />
+                        <div className="grid grid-cols-1 gap-6">
+                            <div className="space-y-2">
+                                <label htmlFor="name" className="text-[10px] font-black text-primary uppercase tracking-widest px-1">Service Name</label>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    defaultValue={service?.name}
+                                    required
+                                    className="w-full p-4 rounded-2xl bg-background border-none focus:ring-2 focus:ring-primary font-medium transition-all"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="description" className="text-[10px] font-black text-primary uppercase tracking-widest px-1">Description</label>
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    rows={3}
+                                    defaultValue={service?.description}
+                                    className="w-full p-4 rounded-2xl bg-background border-none focus:ring-2 focus:ring-primary font-medium transition-all"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="prep_notes" className="text-[10px] font-black text-primary uppercase tracking-widest px-1">Appointment Preparation</label>
+                                <textarea
+                                    id="prep_notes"
+                                    name="prep_notes"
+                                    rows={2}
+                                    defaultValue={service?.prep_notes ?? ""}
+                                    placeholder="Notes for clients (e.g. Please arrive 10 mins early)"
+                                    className="w-full p-4 rounded-2xl bg-background border-none focus:ring-2 focus:ring-primary font-medium transition-all"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section: Pricing & Duration */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 pb-2 border-b border-primary/5">
+                            <div className="w-8 h-8 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                                <HandCoins className="w-4 h-4" />
+                            </div>
+                            <h2 className="font-black text-primary uppercase tracking-widest text-xs">Pricing & Duration</h2>
                         </div>
 
-                        <div className="md:col-span-2">
-                            <label htmlFor="prep_notes" className="block text-sm font-semibold text-foreground mb-2">
-                                Appointment Preparation (notes for clients)
-                            </label>
-                            <textarea
-                                id="prep_notes"
-                                name="prep_notes"
-                                rows={3}
-                                defaultValue={service?.prep_notes ?? ""}
-                                className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-6">
-                            {/* Duration */}
-                            <div>
-                                <label htmlFor="duration_minutes" className="block text-sm font-semibold text-foreground mb-2">
-                                    Duration
-                                </label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label htmlFor="duration_minutes" className="text-[10px] font-black text-primary uppercase tracking-widest px-1">Duration</label>
                                 <select
                                     id="duration_minutes"
                                     name="duration_minutes"
                                     defaultValue={service?.duration_minutes}
                                     required
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                                    className="w-full p-4 rounded-2xl bg-background border-none focus:ring-2 focus:ring-primary font-medium appearance-none transition-all"
                                 >
                                     {DURATION_OPTIONS.map((option) => (
                                         <option key={option.value} value={option.value}>
@@ -214,13 +237,11 @@ export default function EditServicePage() {
                                         </option>
                                     ))}
                                 </select>
+                                <p className="text-[10px] text-primary/40 font-bold uppercase tracking-wider px-1">Include cleanup/prep time to prevent overlaps.</p>
                             </div>
 
-                            {/* Price */}
-                            <div>
-                                <label htmlFor="price" className="block text-sm font-semibold text-foreground mb-2">
-                                    Price ($)
-                                </label>
+                            <div className="space-y-2">
+                                <label htmlFor="price" className="text-[10px] font-black text-primary uppercase tracking-widest px-1">Price ($)</label>
                                 <input
                                     id="price"
                                     name="price"
@@ -229,17 +250,14 @@ export default function EditServicePage() {
                                     min="0"
                                     defaultValue={service?.price}
                                     required
-                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                                    className="w-full p-4 rounded-2xl bg-background border-none focus:ring-2 focus:ring-primary font-medium transition-all"
                                 />
                             </div>
                         </div>
 
-                        {/* Deposit Required Selection */}
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-semibold text-foreground mb-3">
-                                Deposit Required
-                            </label>
-                            <div className="flex flex-wrap gap-3">
+                        <div className="space-y-4 pt-4">
+                            <label className="text-[10px] font-black text-primary uppercase tracking-widest px-1">Required Deposit</label>
+                            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
                                 {[
                                     { label: "None", value: "" },
                                     { label: "10%", value: "10" },
@@ -251,9 +269,9 @@ export default function EditServicePage() {
                                         key={option.label}
                                         type="button"
                                         onClick={() => setSelectedDeposit(option.value)}
-                                        className={`py-2 px-6 text-sm font-medium rounded-lg border whitespace-nowrap transition-all flex-shrink-0 ${selectedDeposit === option.value
-                                            ? "bg-primary text-white border-primary shadow-sm"
-                                            : "bg-white text-tertiary border-slate-200 hover:border-primary hover:text-primary"
+                                        className={`p-4 rounded-2xl border-2 transition-all text-xs font-bold ${selectedDeposit === option.value
+                                            ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105"
+                                            : "bg-background text-tertiary border-transparent hover:border-primary/20"
                                             }`}
                                     >
                                         {option.label}
@@ -261,93 +279,108 @@ export default function EditServicePage() {
                                 ))}
                             </div>
                             <input type="hidden" name="deposit_percentage" value={selectedDeposit} />
-                            <p className="mt-2 text-xs text-tertiary flex items-center gap-1">
-                                <Info className="w-3 h-3" />
-                                Percentage of price required upfront.
-                            </p>
+
+                            {!paymentsConfigured && selectedDeposit !== "" && (
+                                <div className="p-6 rounded-[32px] bg-primary/5 border border-primary/10 space-y-4 animate-in zoom-in duration-300">
+                                    <div className="flex gap-4">
+                                        <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+                                            <Info className="w-6 h-6" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-black text-primary">Payment Method Required</p>
+                                            <p className="text-xs text-tertiary font-medium leading-relaxed">
+                                                To collect deposits, you must configure at least one payment method (Stripe or Interac e-Transfer) in your settings.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <Link
+                                        href={`/${locale}/admin/settings?tab=public`}
+                                        className="w-full flex items-center justify-center gap-2 p-4 rounded-2xl bg-white border border-primary/10 text-xs font-black text-primary uppercase tracking-widest hover:bg-primary/5 transition-all shadow-sm"
+                                    >
+                                        <HandCoins className="w-4 h-4" /> Setup Payments
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Section: Team Assignment */}
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-2 pb-2 border-b border-primary/5">
+                            <div className="w-8 h-8 rounded-xl bg-primary/5 flex items-center justify-center text-primary">
+                                <Users className="w-4 h-4" />
+                            </div>
+                            <h2 className="font-black text-primary uppercase tracking-widest text-xs">Team Assignment</h2>
                         </div>
 
-                        {/* Assigned Staff */}
-                        <div className="md:col-span-2 mt-4">
-                            <div className="flex items-center justify-between mb-3">
-                                <label className="block text-sm font-semibold text-foreground">
-                                    Assigned Staff
-                                </label>
-                                <span className="text-xs text-tertiary">
-                                    {selectedTeamMembers.length} selected
-                                </span>
+                        {loadingTeamMembers ? (
+                            <div className="h-20 flex items-center justify-center">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
                             </div>
-                            {loadingTeamMembers ? (
-                                <div className="text-sm text-tertiary">
-                                    Loading team members...
-                                </div>
-                            ) : teamMembers.length === 0 ? (
-                                <div className="text-sm text-tertiary">
-                                    No team members found yet.
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {teamMembers.map((member) => {
-                                        const isSelected = selectedTeamMembers.includes(member.id);
-                                        return (
-                                            <button
-                                                key={member.id}
-                                                type="button"
-                                                onClick={() => toggleTeamMember(member.id)}
-                                                aria-pressed={isSelected}
-                                                className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left transition-all ${isSelected
-                                                    ? "border-primary bg-primary/10"
-                                                    : "border-slate-200 hover:border-primary/40 hover:bg-slate-50"
-                                                    }`}
-                                            >
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {teamMembers.map((member) => {
+                                    const isSelected = selectedTeamMembers.includes(member.id);
+                                    return (
+                                        <button
+                                            key={member.id}
+                                            type="button"
+                                            onClick={() => toggleTeamMember(member.id)}
+                                            className={`p-4 rounded-2xl border-2 text-left transition-all flex items-center gap-4 ${isSelected
+                                                ? "bg-primary text-white border-primary shadow-lg shadow-primary/20"
+                                                : "bg-background text-foreground border-transparent hover:border-primary/20"
+                                                }`}
+                                        >
+                                            <div className="relative">
                                                 {member.avatar_url ? (
-                                                    <img
-                                                        src={member.avatar_url}
-                                                        alt={member.name}
-                                                        className="h-9 w-9 rounded-full object-cover"
-                                                    />
+                                                    <img src={member.avatar_url} alt={member.name} className="w-12 h-12 rounded-xl object-cover" />
                                                 ) : (
-                                                    <div className={`h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold ${isSelected
-                                                        ? "bg-primary text-white"
-                                                        : "bg-primary/10 text-primary"
-                                                        }`}>
+                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${isSelected ? "bg-white text-primary" : "bg-primary/10 text-primary"}`}>
                                                         {member.name.charAt(0)}
                                                     </div>
                                                 )}
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-semibold text-foreground truncate">
-                                                        {member.name}
-                                                    </p>
-                                                    <p className="text-xs text-tertiary">
-                                                        Tap to {isSelected ? "remove" : "assign"}
-                                                    </p>
-                                                </div>
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                            )}
-                            <input
-                                type="hidden"
-                                name="team_member_ids"
-                                value={JSON.stringify(selectedTeamMembers)}
-                            />
-                            <p className="mt-2 text-xs text-tertiary">
-                                Assign team members who can deliver this service.
-                            </p>
-                        </div>
+                                                {isSelected && (
+                                                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white text-primary flex items-center justify-center shadow-lg border border-primary animate-in zoom-in">
+                                                        <Check className="w-3 h-3" strokeWidth={4} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <p className="font-bold truncate">{member.name}</p>
+                                                <p className={`text-[10px] font-bold uppercase tracking-widest opacity-60 ${isSelected ? "text-white" : "text-tertiary"}`}>
+                                                    {isSelected ? "Assigned" : "Tap to assign"}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        <input type="hidden" name="team_member_ids" value={JSON.stringify(selectedTeamMembers)} />
+                    </div>
 
-                        {/* Pause Flag */}
-                        <div className="flex items-end pb-2">
-                            <label className="flex items-center cursor-pointer gap-3">
+                    {/* Section: Service Status */}
+                    <div className="p-8 rounded-[32px] bg-primary text-white shadow-2xl shadow-primary/30 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16 blur-2xl transition-transform group-hover:scale-150 duration-700" />
+
+                        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-black uppercase tracking-widest">Service Visibility</h3>
+                                <p className="text-sm text-white/70 font-medium max-w-sm">
+                                    When paused, clients won't be able to book this service online. You can still manage it from the admin panel.
+                                </p>
+                            </div>
+
+                            <label className="relative flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
                                     name="is_paused"
                                     defaultChecked={service?.is_paused}
-                                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary cursor-pointer"
+                                    className="sr-only peer"
                                 />
-                                <span className="text-sm font-semibold text-foreground">
-                                    Pause service
+                                <div className="w-16 h-8 bg-white/20 rounded-full peer peer-focus:ring-4 peer-focus:ring-white/20 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-7 after:w-7 after:transition-all peer-checked:bg-emerald-500 shadow-inner" />
+                                <span className="ml-4 text-lg font-black uppercase tracking-widest">
+                                    {service?.is_paused ? "Paused" : "Active"}
                                 </span>
                             </label>
                         </div>
@@ -359,19 +392,19 @@ export default function EditServicePage() {
                         </div>
                     )}
 
-                    <div className="flex items-center justify-end gap-4 border-t border-slate-100 pt-8">
+                    <div className="flex items-center justify-end gap-6 border-t border-primary/10 pt-10">
                         <Link
                             href={`/${locale}/admin/services`}
-                            className="h-10 px-6 rounded-lg font-medium text-tertiary hover:bg-slate-50 transition-colors flex items-center"
+                            className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs text-tertiary hover:bg-background transition-all flex items-center"
                         >
-                            Cancel
+                            Cancel Changes
                         </Link>
                         <button
                             type="submit"
                             disabled={isPending}
-                            className="bg-primary text-white hover:bg-primary-dark h-10 px-8 rounded-lg font-medium transition-colors disabled:opacity-50"
+                            className="bg-primary text-white shadow-xl shadow-primary/30 h-14 px-12 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                         >
-                            {isPending ? "Saving..." : "Save Changes"}
+                            {isPending ? "Saving..." : "Save Service"}
                         </button>
                     </div>
                 </form>

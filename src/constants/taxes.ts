@@ -1,3 +1,5 @@
+export type ProvinceCode = 'AB' | 'BC' | 'MB' | 'NB' | 'NL' | 'NS' | 'NT' | 'NU' | 'ON' | 'PE' | 'QC' | 'SK' | 'YT';
+
 /**
  * Canadian Tax Rates by Province/Territory
  * Updated as of 2026
@@ -175,12 +177,12 @@ export const TAX_RATES: Record<string, TaxRate> = {
  */
 export function calculateTax(subtotal: number, provinceCode: string) {
     const taxRate = TAX_RATES[provinceCode] || TAX_RATES.ON; // Default to Ontario
-    
+
     const gstAmount = taxRate.gst > 0 ? (subtotal * taxRate.gst) / 100 : 0;
     const pstAmount = taxRate.pst > 0 ? (subtotal * taxRate.pst) / 100 : 0;
     const hstAmount = taxRate.hst > 0 ? (subtotal * taxRate.hst) / 100 : 0;
     const qstAmount = taxRate.qst > 0 ? (subtotal * taxRate.qst) / 100 : 0;
-    
+
     const totalTax = gstAmount + pstAmount + hstAmount + qstAmount;
     const total = subtotal + totalTax;
 
@@ -222,28 +224,28 @@ export function getProvinceCodes(): string[] {
  */
 export function formatTaxBreakdown(calculation: ReturnType<typeof calculateTax>) {
     const items = [];
-    
+
     if (calculation.gst > 0) {
         items.push({ label: 'GST (5%)', amount: calculation.gst });
     }
-    
+
     if (calculation.pst > 0) {
         const taxRate = TAX_RATES[Object.keys(TAX_RATES).find(
             code => TAX_RATES[code].pst === (calculation.pst / calculation.subtotal) * 100
         ) || 'BC'];
         items.push({ label: `PST (${taxRate?.pst}%)`, amount: calculation.pst });
     }
-    
+
     if (calculation.hst > 0) {
         const taxRate = TAX_RATES[Object.keys(TAX_RATES).find(
             code => TAX_RATES[code].hst === (calculation.hst / calculation.subtotal) * 100
         ) || 'ON'];
         items.push({ label: `HST (${taxRate?.hst}%)`, amount: calculation.hst });
     }
-    
+
     if (calculation.qst > 0) {
         items.push({ label: 'QST (9.975%)', amount: calculation.qst });
     }
-    
+
     return items;
 }

@@ -108,11 +108,11 @@ export default function SettingsPage() {
                 const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const shouldAutoDetect = !tenant.timezone || tenant.timezone === "America/Toronto";
                 const detectedTimezone = shouldAutoDetect ? browserTimezone : tenant.timezone;
-                
+
                 // Auto-detect province based on timezone if not set or using default
                 const shouldAutoDetectProvince = !tenant.tax_province || tenant.tax_province === "ON";
                 const detectedProvince = shouldAutoDetectProvince ? inferProvinceFromTimezone(detectedTimezone) : tenant.tax_province;
-                
+
                 setSettings({
                     name: tenant.name ?? "",
                     slug: tenant.slug ?? "",
@@ -207,7 +207,7 @@ export default function SettingsPage() {
 
         setIsSaving(false);
         setSaveSuccess(true);
-        
+
         // Hide success message after 3 seconds
         setTimeout(() => {
             setSaveSuccess(false);
@@ -268,605 +268,509 @@ export default function SettingsPage() {
     }, [logoPreviewUrl]);
 
     return (
-        <div className="space-y-6">
-            <div className="bg-white shadow-sm rounded-xl p-6 max-w-3xl mx-auto space-y-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-foreground">Settings</h1>
-                    <p className="text-sm text-tertiary mt-0.5">Manage your business profile and booking preferences.</p>
+        <div className="max-w-5xl mx-auto space-y-8 pb-20">
+            {/* Header section with responsive layout */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-black text-primary uppercase tracking-tight">Settings</h1>
+                    <p className="text-sm text-tertiary font-medium">Manage your business profile and booking preferences.</p>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                    {tabs.map((tab) => {
-                        const Icon = tab.icon;
-                        const isActive = activeTab === tab.id;
-                        return (
-                            <button
-                                key={tab.id}
-                                type="button"
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                    isActive
-                                        ? "bg-primary text-white"
-                                        : "text-tertiary hover:text-foreground hover:bg-primary/10"
-                                }`}
-                            >
-                                <Icon className="w-4 h-4" />
-                                <span>{tab.label}</span>
-                            </button>
-                        );
-                    })}
+                {/* Tab Navigation - Scrollable on mobile */}
+                <div className="flex items-center p-1.5 bg-primary/5 rounded-2xl border border-primary/10 overflow-x-auto no-scrollbar">
+                    <div className="flex items-center gap-1 min-w-max">
+                        {tabs.map((tab) => {
+                            const Icon = tab.icon;
+                            const isActive = activeTab === tab.id;
+                            return (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300 ${isActive
+                                        ? "bg-white text-primary shadow-sm scale-100"
+                                        : "text-tertiary hover:text-primary hover:bg-white/50 scale-95"
+                                        }`}
+                                >
+                                    <Icon className="w-4 h-4" />
+                                    <span>{tab.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 
-            {activeTab === "general" && (
-                <div className="bg-white shadow-sm rounded-xl p-6 max-w-3xl mx-auto">
-                    <form className="space-y-6">
-                        <div>
-                            <h2 className="text-lg font-semibold text-foreground">Business Details</h2>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="md:col-span-2">
-                                <label htmlFor="tenant_name" className="block text-sm font-semibold text-foreground mb-2">
-                                    Business Name
-                                </label>
-                                <input
-                                    id="tenant_name"
-                                    name="tenant_name"
-                                    type="text"
-                                    value={settings.name}
-                                    onChange={(e) => updateField("name", e.target.value)}
-                                    className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                    placeholder="StayBooked Spa"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="tax_province" className="block text-sm font-semibold text-foreground mb-2">
-                                    Tax Province
-                                </label>
-                                <select
-                                    id="tax_province"
-                                    name="tax_province"
-                                    value={settings.tax_province}
-                                    onChange={(e) => updateField("tax_province", e.target.value)}
-                                    className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                >
-                                    <option value="ON">Ontario</option>
-                                    <option value="BC">British Columbia</option>
-                                    <option value="AB">Alberta</option>
-                                    <option value="QC">Quebec</option>
-                                    <option value="MB">Manitoba</option>
-                                    <option value="SK">Saskatchewan</option>
-                                    <option value="NS">Nova Scotia</option>
-                                    <option value="NB">New Brunswick</option>
-                                    <option value="NL">Newfoundland and Labrador</option>
-                                    <option value="PE">Prince Edward Island</option>
-                                    <option value="NT">Northwest Territories</option>
-                                    <option value="NU">Nunavut</option>
-                                    <option value="YT">Yukon</option>
-                                </select>
-                                <p className="mt-1 text-xs text-tertiary">
-                                    Auto-detected based on your timezone
-                                </p>
-                            </div>
-
-                            <div>
-                                <label htmlFor="timezone" className="block text-sm font-semibold text-foreground mb-2">
-                                    Timezone
-                                </label>
-                                <div className="space-y-2">
-                                    <select
-                                        id="timezone"
-                                        name="timezone"
-                                        value={settings.timezone}
-                                        onChange={(e) => updateField("timezone", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                    >
-                                        <optgroup label="Canada - Eastern">
-                                            <option value="America/Toronto">Toronto, Ottawa, Montreal</option>
-                                        </optgroup>
-                                        <optgroup label="Canada - Pacific">
-                                            <option value="America/Vancouver">Vancouver, Victoria</option>
-                                        </optgroup>
-                                        <optgroup label="Canada - Mountain">
-                                            <option value="America/Edmonton">Edmonton, Calgary</option>
-                                        </optgroup>
-                                        <optgroup label="Canada - Central">
-                                            <option value="America/Winnipeg">Winnipeg, Regina</option>
-                                        </optgroup>
-                                        <optgroup label="Canada - Atlantic">
-                                            <option value="America/Halifax">Halifax, Moncton</option>
-                                        </optgroup>
-                                        <optgroup label="Other Timezones">
-                                            <option value="America/St_Johns">St. John's, NL</option>
-                                            <option value="America/Whitehorse">Whitehorse, YT</option>
-                                            <option value="America/Yellowknife">Yellowknife, NT</option>
-                                            <option value="America/New_York">New York (ET)</option>
-                                            <option value="America/Chicago">Chicago (CT)</option>
-                                            <option value="America/Denver">Denver (MT)</option>
-                                            <option value="America/Los_Angeles">Los Angeles (PT)</option>
-                                            <option value="America/Phoenix">Phoenix (MST)</option>
-                                            <option value="America/Anchorage">Anchorage (AKT)</option>
-                                            <option value="Pacific/Honolulu">Honolulu (HST)</option>
-                                        </optgroup>
-                                    </select>
-                                    {settings.timezone && (
-                                        <p className="text-xs text-tertiary">
-                                            Current time: {getCurrentTime(settings.timezone)}
-                                        </p>
-                                    )}
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {activeTab === "general" && (
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        {/* Left Column: Business Details */}
+                        <div className="lg:col-span-8 space-y-8">
+                            <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+                                        <Settings className="w-5 h-5" />
+                                    </div>
+                                    <h2 className="text-sm font-black text-primary uppercase tracking-widest">Business details</h2>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div className="pt-2">
-                            <h3 className="text-sm font-semibold text-foreground">Primary Contact</h3>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div>
-                                <label htmlFor="contact_name" className="block text-sm font-semibold text-foreground mb-2">
-                                    Contact Name
-                                </label>
-                                <input
-                                    id="contact_name"
-                                    name="contact_name"
-                                    type="text"
-                                    value={settings.primary_contact_name}
-                                    onChange={(e) => updateField("primary_contact_name", e.target.value)}
-                                    className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                    placeholder="Jane Doe"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="contact_email" className="block text-sm font-semibold text-foreground mb-2">
-                                    Contact Email
-                                </label>
-                                <input
-                                    id="contact_email"
-                                    name="contact_email"
-                                    type="email"
-                                    value={settings.primary_contact_email}
-                                    onChange={(e) => updateField("primary_contact_email", e.target.value)}
-                                    className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                    placeholder="hello@staybooked.com"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="contact_phone" className="block text-sm font-semibold text-foreground mb-2">
-                                    Contact Phone
-                                </label>
-                                <input
-                                    id="contact_phone"
-                                    name="contact_phone"
-                                    type="tel"
-                                    value={settings.primary_contact_phone}
-                                    onChange={(e) => updateField("primary_contact_phone", e.target.value)}
-                                    className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                    placeholder="+1 (555) 123-4567"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                onClick={saveSettings}
-                                disabled={isSaving || isLoading}
-                                className="inline-flex items-center justify-center h-10 px-5 rounded-lg bg-primary text-white font-medium transition-colors hover:bg-primary-dark disabled:opacity-60 disabled:cursor-not-allowed"
-                            >
-                                {isSaving ? "Saving..." : "Save Changes"}
-                            </button>
-                            {saveSuccess && (
-                                <span className="ml-3 text-sm text-green-600 font-medium">Saved successfully</span>
-                            )}
-                        </div>
-                    </form>
-                </div>
-            )}
-
-            {activeTab === "public" && (
-                <div className="max-w-3xl mx-auto">
-                    <form className="space-y-6">
-                        <div className="bg-white shadow-sm rounded-xl p-6 space-y-6">
-                            <div>
-                                <h2 className="text-lg font-semibold text-foreground">Public Booking Page</h2>
-                                <p className="text-sm text-tertiary mt-1">Information displayed on the public booking page</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="md:col-span-2">
-                                    <label htmlFor="public_slug" className="block text-sm font-semibold text-foreground mb-2">
-                                        Public booking page URL
-                                    </label>
-                                    <div className="flex items-center w-full rounded-lg border border-primary/20 bg-white shadow-sm focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
-                                        <span className="px-4 text-sm text-tertiary whitespace-nowrap">https://staybooked.ca/booking/</span>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-2 space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Business Name</label>
                                         <input
-                                            id="public_slug"
-                                            name="public_slug"
                                             type="text"
-                                            value={settings.slug}
-                                            onChange={(e) => updateField("slug", normalizeSlug(e.target.value))}
-                                            className="w-full px-2 py-2 text-sm rounded-r-lg focus:outline-none"
-                                            placeholder="your-business"
+                                            value={settings.name}
+                                            onChange={(e) => updateField("name", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="Your Business Name"
                                         />
                                     </div>
-                                    {settings.slug ? (
-                                        <div className="mt-2">
-                                            <a
-                                                href={`https://staybooked.ca/booking/${settings.slug}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
-                                            >
-                                                Open public booking page
-                                            </a>
-                                        </div>
-                                    ) : null}
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Tax Province</label>
+                                        <select
+                                            value={settings.tax_province}
+                                            onChange={(e) => updateField("tax_province", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none appearance-none"
+                                        >
+                                            <option value="ON">Ontario</option>
+                                            <option value="BC">British Columbia</option>
+                                            <option value="AB">Alberta</option>
+                                            <option value="QC">Quebec</option>
+                                            <option value="MB">Manitoba</option>
+                                            <option value="SK">Saskatchewan</option>
+                                            <option value="NS">Nova Scotia</option>
+                                            <option value="NB">New Brunswick</option>
+                                            <option value="NL">Newfoundland and Labrador</option>
+                                            <option value="PE">Prince Edward Island</option>
+                                            <option value="NT">Northwest Territories</option>
+                                            <option value="NU">Nunavut</option>
+                                            <option value="YT">Yukon</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Timezone</label>
+                                        <select
+                                            value={settings.timezone}
+                                            onChange={(e) => updateField("timezone", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none appearance-none"
+                                        >
+                                            <optgroup label="Canada">
+                                                <option value="America/Toronto">Eastern Time</option>
+                                                <option value="America/Winnipeg">Central Time</option>
+                                                <option value="America/Edmonton">Mountain Time</option>
+                                                <option value="America/Vancouver">Pacific Time</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-secondary/5 flex items-center justify-center text-secondary">
+                                        <Phone className="w-5 h-5" />
+                                    </div>
+                                    <h2 className="text-sm font-black text-primary uppercase tracking-widest">Primary Contact</h2>
                                 </div>
 
-                                <div className="md:col-span-2">
-                                    <div className="flex items-center justify-between rounded-lg border border-primary/10 p-4">
-                                        <div>
-                                            <p className="text-sm font-semibold text-foreground">Public booking page</p>
-                                            <p className="text-sm text-tertiary">{settings.public_booking_enabled ? "Enabled" : "Disabled"}</p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => updateField("public_booking_enabled", !settings.public_booking_enabled)}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.public_booking_enabled ? "bg-primary" : "bg-tertiary/30"}`}
-                                            aria-label="Toggle public booking page"
-                                            aria-pressed={settings.public_booking_enabled}
-                                        >
-                                            <span
-                                                className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${settings.public_booking_enabled ? "translate-x-5" : "translate-x-1"}`}
-                                            />
-                                        </button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Contact Name</label>
+                                        <input
+                                            type="text"
+                                            value={settings.primary_contact_name}
+                                            onChange={(e) => updateField("primary_contact_name", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="Admin Name"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Phone Number</label>
+                                        <input
+                                            type="tel"
+                                            value={settings.primary_contact_phone}
+                                            onChange={(e) => updateField("primary_contact_phone", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="+1 (555) 000-0000"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Email Address</label>
+                                        <input
+                                            type="email"
+                                            value={settings.primary_contact_email}
+                                            onChange={(e) => updateField("primary_contact_email", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="admin@email.com"
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white shadow-sm rounded-xl p-6">
-                            <label className="block text-sm font-semibold text-foreground mb-2">
-                                Logo
-                            </label>
-                            <div className="space-y-4">
-                                <div
-                                    onClick={() => logoFileInputRef.current?.click()}
-                                    className="relative w-full h-40 rounded-lg bg-gray-50 border border-primary/10 flex items-center justify-center overflow-hidden cursor-pointer group hover:border-primary transition-all"
-                                >
-                                    {logoPreviewUrl || settings.logo_url ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img
-                                            src={logoPreviewUrl || settings.logo_url}
-                                            alt="Logo preview"
-                                            className="object-contain"
-                                            style={{
-                                                width: `${settings.logo_size}px`,
-                                                height: `${settings.logo_size}px`,
-                                            }}
-                                        />
-                                    ) : (
-                                        <div className="flex flex-col items-center gap-3 text-gray-300">
-                                            <svg
-                                                className="w-16 h-16"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={1.5}
-                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            <p className="text-sm text-gray-400">Click to upload logo</p>
-                                        </div>
-                                    )}
-
-                                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Camera className="w-8 h-8 text-white" />
+                        {/* Right Column: Logo & Branding */}
+                        <div className="lg:col-span-4 space-y-8">
+                            <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8 h-full">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+                                        <Camera className="w-5 h-5" />
                                     </div>
+                                    <h2 className="text-sm font-black text-primary uppercase tracking-widest">Logo & Branding</h2>
                                 </div>
 
-                                <input
-                                    ref={logoFileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) {
-                                            void handleLogoUpload(file);
-                                        }
-                                    }}
-                                    className="hidden"
-                                />
+                                <div className="space-y-6">
+                                    <div
+                                        onClick={() => logoFileInputRef.current?.click()}
+                                        className="relative aspect-square rounded-[32px] bg-primary/5 border-2 border-dashed border-primary/10 flex flex-col items-center justify-center overflow-hidden cursor-pointer group hover:border-primary transition-all"
+                                    >
+                                        {logoPreviewUrl || settings.logo_url ? (
+                                            <img
+                                                src={logoPreviewUrl || settings.logo_url}
+                                                alt="Logo preview"
+                                                className="object-contain"
+                                                style={{
+                                                    width: `${settings.logo_size}px`,
+                                                    height: `${settings.logo_size}px`,
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="text-center p-6 space-y-2">
+                                                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm mx-auto">
+                                                    <Camera className="w-6 h-6" />
+                                                </div>
+                                                <p className="text-[10px] font-black text-primary uppercase tracking-widest">Click to upload</p>
+                                            </div>
+                                        )}
+                                        <div className="absolute inset-0 bg-primary/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <span className="text-white text-[10px] font-black uppercase tracking-widest">Replace Logo</span>
+                                        </div>
+                                    </div>
 
-                                <div className="space-y-1">
-                                    <label htmlFor="logo_size" className="text-xs font-medium text-tertiary">
-                                        Logo size ({settings.logo_size}px)
-                                    </label>
                                     <input
-                                        id="logo_size"
-                                        type="range"
-                                        min={60}
-                                        max={400}
-                                        value={settings.logo_size}
-                                        onChange={(e) => updateField("logo_size", Number(e.target.value))}
-                                        className="w-full"
+                                        ref={logoFileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) void handleLogoUpload(file);
+                                        }}
+                                        className="hidden"
                                     />
-                                </div>
 
-                                {isUploadingLogo && (
-                                    <p className="text-xs text-tertiary">Uploading logo...</p>
-                                )}
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center px-1">
+                                            <label className="text-[10px] font-black text-primary uppercase tracking-widest">Logo size</label>
+                                            <span className="text-[10px] font-black text-primary">{settings.logo_size}px</span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min={60}
+                                            max={400}
+                                            value={settings.logo_size}
+                                            onChange={(e) => updateField("logo_size", Number(e.target.value))}
+                                            className="w-full accent-primary"
+                                        />
+                                    </div>
 
-                                {(logoPreviewUrl || settings.logo_url) && (
-                                    <div className="pt-1">
+                                    {(logoPreviewUrl || settings.logo_url) && (
                                         <button
                                             type="button"
                                             onClick={handleRemoveLogo}
-                                            className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+                                            className="w-full py-4 text-[10px] font-black text-danger uppercase tracking-widest hover:bg-danger/5 rounded-2xl transition-all"
                                         >
-                                            Remove logo
+                                            Remove Logo
                                         </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Sticky Save Bar for General Tab */}
+                        <div className="md:col-span-2 lg:col-span-12 fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-50">
+                            <div className="bg-primary backdrop-blur-md rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 border border-white/10">
+                                <div className="px-4">
+                                    {saveSuccess ? (
+                                        <p className="text-white text-xs font-black uppercase tracking-widest">Changes Saved!</p>
+                                    ) : (
+                                        <p className="text-white/60 text-xs font-black uppercase tracking-widest truncate">Unsaved Changes</p>
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={saveSettings}
+                                    disabled={isSaving || isLoading}
+                                    className="h-12 px-8 rounded-xl bg-secondary text-primary font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                                >
+                                    {isSaving ? "Saving..." : "Save All"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === "public" && (
+                    <div className="space-y-8 pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8">
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-secondary/5 flex items-center justify-center text-secondary">
+                                        <Globe className="w-5 h-5" />
                                     </div>
-                                )}
+                                    <div>
+                                        <h2 className="text-sm font-black text-primary uppercase tracking-widest">Public Profile</h2>
+                                        <p className="text-[10px] font-bold text-tertiary uppercase tracking-widest mt-0.5">Control your online presence</p>
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => updateField("public_booking_enabled", !settings.public_booking_enabled)}
+                                    className={`relative inline-flex h-8 w-14 items-center rounded-full transition-all duration-300 ${settings.public_booking_enabled ? "bg-secondary" : "bg-primary/10"}`}
+                                >
+                                    <span className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${settings.public_booking_enabled ? "translate-x-7" : "translate-x-1"}`} />
+                                </button>
                             </div>
-                        </div>
-
-                        <div className="bg-white shadow-sm rounded-xl p-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label htmlFor="public_email" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                                        <Mail className="w-4 h-4 text-tertiary" />
-                                        Email
-                                    </label>
-                                    <input
-                                        id="public_email"
-                                        name="public_email"
-                                        type="email"
-                                        value={settings.public_email}
-                                        onChange={(e) => updateField("public_email", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="bookings@staybooked.com"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label htmlFor="public_phone" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                                        <Phone className="w-4 h-4 text-tertiary" />
-                                        Phone
-                                    </label>
-                                    <input
-                                        id="public_phone"
-                                        name="public_phone"
-                                        type="tel"
-                                        value={settings.public_phone}
-                                        onChange={(e) => updateField("public_phone", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="+1 (555) 555-0000"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label htmlFor="public_website" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                                        <Globe className="w-4 h-4 text-tertiary" />
-                                        Website
-                                    </label>
-                                    <input
-                                        id="public_website"
-                                        name="public_website"
-                                        type="url"
-                                        value={settings.public_website}
-                                        onChange={(e) => updateField("public_website", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="https://www.staybooked.com"
-                                    />
-                                </div>
-
-                                <div>
-                                    <label htmlFor="public_instagram" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                                        <Instagram className="w-4 h-4 text-tertiary" />
-                                        Instagram Handle
-                                    </label>
-                                    <input
-                                        id="public_instagram"
-                                        name="public_instagram"
-                                        type="text"
-                                        value={settings.public_instagram}
-                                        onChange={(e) => updateField("public_instagram", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="@staybooked"
-                                    />
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label htmlFor="public_address" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                                        <MapPin className="w-4 h-4 text-tertiary" />
-                                        Physical Address
-                                    </label>
-                                    <input
-                                        id="public_address"
-                                        name="public_address"
-                                        type="text"
-                                        value={settings.public_address}
-                                        onChange={(e) => updateField("public_address", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="123 King Street, Toronto, ON"
-                                    />
-                                </div>
-
-                                <div className="md:col-span-2">
-                                    <label htmlFor="public_message" className="flex items-center gap-2 text-sm font-semibold text-foreground mb-2">
-                                        <MessageSquare className="w-4 h-4 text-tertiary" />
-                                        Public Message
-                                    </label>
-                                    <textarea
-                                        id="public_message"
-                                        name="public_message"
-                                        rows={4}
-                                        value={settings.public_message}
-                                        onChange={(e) => updateField("public_message", e.target.value)}
-                                        className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="Holiday hours, new services, special offers, or updates you want clients to see."
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="pt-2">
-                            <h3 className="text-sm font-semibold text-foreground mb-4">
-                                Accept booking amounts or deposits from clients
-                            </h3>
 
                             <div className="space-y-4">
-                                <div className="rounded-lg border border-primary/10 p-4">
-                                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                        <div className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-                                            <span className="inline-flex items-center justify-center h-7 px-3 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-                                                Stripe
-                                            </span>
-                                            Card payments
-                                            <span className="text-xs font-medium text-tertiary">{stripeStatusLabel}</span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={handleStripeConnect}
-                                            disabled={isConnectingStripe}
-                                            className="inline-flex items-center justify-center h-10 px-4 rounded-lg bg-primary text-white text-sm font-medium transition-colors hover:bg-primary-dark disabled:opacity-60 disabled:cursor-not-allowed"
+                                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Page URL</label>
+                                <div className="flex items-center gap-0 w-full h-14 bg-primary/5 hover:bg-primary/[0.08] transition-all rounded-2xl overflow-hidden border border-transparent focus-within:border-primary/20 focus-within:bg-white group">
+                                    <span className="px-5 text-xs font-bold text-tertiary border-r border-primary/10 whitespace-nowrap">staybooked.ca/book/</span>
+                                    <input
+                                        type="text"
+                                        value={settings.slug}
+                                        onChange={(e) => updateField("slug", normalizeSlug(e.target.value))}
+                                        className="flex-1 h-full px-4 bg-transparent text-sm font-bold text-primary outline-none"
+                                        placeholder="your-business-name"
+                                    />
+                                    {settings.slug && (
+                                        <a
+                                            href={`/book/${settings.slug}`}
+                                            target="_blank"
+                                            className="h-full px-6 flex items-center bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:bg-primary-dark transition-all"
                                         >
-                                            {isConnectingStripe ? "Connecting..." : "Connect Stripe"}
-                                        </button>
+                                            View Page
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+                                        <Mail className="w-5 h-5" />
                                     </div>
+                                    <h2 className="text-sm font-black text-primary uppercase tracking-widest">Connect</h2>
                                 </div>
 
-                                <div className="rounded-lg border border-primary/10 p-4">
-                                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                                        <div className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
-                                            <span className="inline-flex items-center justify-center h-7 px-3 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-                                                Interac
-                                            </span>
-                                            Email Transfer
-                                        </div>
-                                        <div className="w-full md:max-w-xs">
-                                            <input
-                                                id="interac_email"
-                                                name="interac_email"
-                                                type="email"
-                                                value={settings.interac_email}
-                                                onChange={(e) => updateField("interac_email", e.target.value)}
-                                                className="w-full px-4 py-2 border border-primary/20 rounded-lg text-sm shadow-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                                placeholder="payments@staybooked.com"
-                                            />
-                                        </div>
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Public Email</label>
+                                        <input
+                                            type="email"
+                                            value={settings.public_email}
+                                            onChange={(e) => updateField("public_email", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="info@business.com"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={settings.public_phone}
+                                            onChange={(e) => updateField("public_phone", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="+1 (555) 000-0000"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+                                        <MapPin className="w-5 h-5" />
+                                    </div>
+                                    <h2 className="text-sm font-black text-primary uppercase tracking-widest">Location</h2>
+                                </div>
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Physical Address</label>
+                                        <input
+                                            type="text"
+                                            value={settings.public_address}
+                                            onChange={(e) => updateField("public_address", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="123 Main St, Toronto, ON"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Website URL</label>
+                                        <input
+                                            type="url"
+                                            value={settings.public_website}
+                                            onChange={(e) => updateField("public_website", e.target.value)}
+                                            className="w-full h-14 px-5 bg-primary/5 border-transparent rounded-2xl text-sm font-bold text-primary focus:bg-white focus:border-primary/20 transition-all outline-none"
+                                            placeholder="https://yourwebsite.com"
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex justify-end">
-                            <button
-                                type="button"
-                                onClick={saveSettings}
-                                disabled={isSaving || isLoading}
-                                className="inline-flex items-center justify-center h-10 px-5 rounded-lg bg-primary text-white font-medium transition-colors hover:bg-primary-dark disabled:opacity-60 disabled:cursor-not-allowed"
-                            >
-                                {isSaving ? "Saving..." : "Save Changes"}
-                            </button>
-                            {saveSuccess && (
-                                <span className="ml-3 text-sm text-green-600 font-medium">Saved successfully</span>
-                            )}
-                        </div>
-                    </form>
-                </div>
-            )}
-
-            {activeTab === "billing" && (
-                <div className="bg-white shadow-sm rounded-xl p-6 space-y-6 max-w-3xl mx-auto">
-                    <div>
-                        <h2 className="text-lg font-semibold text-foreground">Billing & Invoicing</h2>
-                    </div>
-
-                    <div className="bg-primary/5 rounded-xl p-5">
-                        <div className="flex items-center justify-between gap-4">
-                            <div>
-                                <p className="text-sm font-semibold text-foreground">Current Plan</p>
-                                <p className="text-xl font-semibold text-foreground mt-1">Monthly Platform Plan</p>
-                                <p className="text-sm text-tertiary">$0.29 per booking • billed monthly</p>
+                        <div className="bg-white rounded-[32px] border border-primary/10 p-8 shadow-sm space-y-8">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-secondary/5 flex items-center justify-center text-secondary">
+                                    <CreditCard className="w-5 h-5" />
+                                </div>
+                                <h2 className="text-sm font-black text-primary uppercase tracking-widest">Payment Methods</h2>
                             </div>
-                            <button
-                                type="button"
-                                className="inline-flex items-center justify-center h-10 px-4 rounded-lg bg-primary text-white text-sm font-medium transition-colors hover:bg-primary-dark"
-                            >
-                                Manage Plan
-                            </button>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Stripe Connection */}
+                                <div className="p-8 rounded-3xl border border-primary/5 bg-primary/5 space-y-6">
+                                    <div className="flex items-start justify-between">
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black text-primary uppercase tracking-widest">Stripe Connect</p>
+                                            <p className="text-xs font-bold text-tertiary uppercase tracking-widest">{stripeStatusLabel}</p>
+                                        </div>
+                                        <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm">
+                                            <CreditCard className="w-6 h-6" />
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleStripeConnect}
+                                        disabled={isConnectingStripe}
+                                        className="w-full h-14 rounded-2xl bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg active:shadow-sm"
+                                    >
+                                        {isConnectingStripe ? "Connecting..." : settings.stripe_connect_account_id ? "Manage Account" : "Connect Stripe"}
+                                    </button>
+                                </div>
+
+                                {/* Interac e-Transfer */}
+                                <div className="p-8 rounded-3xl border border-primary/5 bg-primary/5 space-y-6">
+                                    <div className="flex items-start justify-between">
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black text-primary uppercase tracking-widest">Interac Transfer</p>
+                                            <p className="text-xs font-bold text-tertiary uppercase tracking-widest">For Client Deposits</p>
+                                        </div>
+                                        <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm">
+                                            <Mail className="w-6 h-6" />
+                                        </div>
+                                    </div>
+                                    <input
+                                        type="email"
+                                        value={settings.interac_email}
+                                        onChange={(e) => updateField("interac_email", e.target.value)}
+                                        className="w-full h-14 px-5 bg-white border border-primary/10 rounded-2xl text-sm font-bold text-primary outline-none focus:border-primary/30 transition-all shadow-sm"
+                                        placeholder="payments@business.com"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Sticky Save Bar for Public Tab */}
+                        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-lg z-50">
+                            <div className="bg-primary backdrop-blur-md rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-4 border border-white/10">
+                                <div className="px-4">
+                                    {saveSuccess ? (
+                                        <p className="text-white text-xs font-black uppercase tracking-widest">Saved!</p>
+                                    ) : (
+                                        <p className="text-white/60 text-xs font-black uppercase tracking-widest">Public Profile</p>
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={saveSettings}
+                                    disabled={isSaving || isLoading}
+                                    className="h-12 px-8 rounded-xl bg-secondary text-primary font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+                                >
+                                    {isSaving ? "Saving..." : "Save Profile"}
+                                </button>
+                            </div>
                         </div>
                     </div>
+                )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-semibold text-foreground mb-2">
-                                Stripe Billing
-                            </label>
-                            <button
-                                type="button"
-                                className="inline-flex items-center justify-center h-10 px-4 rounded-lg bg-primary text-white text-sm font-medium transition-colors hover:bg-primary-dark"
-                            >
-                                Setup Stripe Billing
-                            </button>
+                {activeTab === "billing" && (
+                    <div className="space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="bg-white rounded-[32px] border border-primary/10 p-10 shadow-sm space-y-10">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-[20px] bg-primary/5 flex items-center justify-center text-primary">
+                                        <CreditCard className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-sm font-black text-primary uppercase tracking-widest">Current Plan</h2>
+                                        <p className="text-xl font-black text-primary mt-0.5">StayBooked Pro</p>
+                                    </div>
+                                </div>
+                                <div className="text-left md:text-right">
+                                    <p className="text-[10px] font-black text-primary/40 uppercase tracking-widest">Billed Monthly</p>
+                                    <p className="text-2xl font-black text-secondary">$0.29 / booking</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-primary/5">
+                                <div className="space-y-2">
+                                    <p className="text-[10px] font-black text-primary uppercase tracking-widest opacity-40">Payment Status</p>
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary text-[10px] font-black uppercase tracking-widest">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
+                                        Account Active
+                                    </div>
+                                </div>
+                                <div className="flex md:justify-end items-end">
+                                    <button className="h-12 px-8 rounded-xl bg-primary text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all">
+                                        Manage Billing
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-sm font-semibold text-foreground">Invoices</h3>
-                            <button
-                                type="button"
-                                className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
-                            >
-                                View All
-                            </button>
-                        </div>
+                        <div className="bg-white rounded-[32px] border border-primary/10 p-10 shadow-sm space-y-8">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl bg-primary/5 flex items-center justify-center text-primary">
+                                    <Settings className="w-5 h-5" />
+                                </div>
+                                <h2 className="text-sm font-black text-primary uppercase tracking-widest">Recent Invoices</h2>
+                            </div>
 
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-sm">
-                                <thead>
-                                    <tr className="text-left text-tertiary">
-                                        <th className="py-2">Invoice</th>
-                                        <th className="py-2">Period</th>
-                                        <th className="py-2">Amount</th>
-                                        <th className="py-2">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {[
-                                        { id: "INV-2026-03", period: "Feb 2026", amount: "$128.34", status: "Paid" },
-                                        { id: "INV-2026-02", period: "Jan 2026", amount: "$94.55", status: "Paid" },
-                                        { id: "INV-2026-01", period: "Dec 2025", amount: "$76.91", status: "Paid" },
-                                    ].map((invoice) => (
-                                        <tr key={invoice.id} className="border-t border-primary/10">
-                                            <td className="py-3 font-medium text-foreground">{invoice.id}</td>
-                                            <td className="py-3 text-tertiary">{invoice.period}</td>
-                                            <td className="py-3 text-foreground">{invoice.amount}</td>
-                                            <td className="py-3">
-                                                <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                                                    {invoice.status}
-                                                </span>
-                                            </td>
+                            <div className="rounded-2xl border border-primary/5 overflow-hidden">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="bg-primary/5">
+                                            <th className="px-6 py-4 text-left text-[10px] font-black text-primary uppercase tracking-widest">Invoice</th>
+                                            <th className="px-6 py-4 text-left text-[10px] font-black text-primary uppercase tracking-widest">Period</th>
+                                            <th className="px-6 py-4 text-left text-[10px] font-black text-primary uppercase tracking-widest">Amount</th>
+                                            <th className="px-6 py-4 text-right text-[10px] font-black text-primary uppercase tracking-widest">Status</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-primary/5">
+                                        {[
+                                            { id: "INV-001", period: "Mar 2024", amount: "$42.10", status: "Paid" },
+                                            { id: "INV-002", period: "Feb 2024", amount: "$38.45", status: "Paid" },
+                                            { id: "INV-003", period: "Jan 2024", amount: "$29.90", status: "Paid" },
+                                        ].map((invoice) => (
+                                            <tr key={invoice.id} className="hover:bg-primary/[0.02] transition-colors">
+                                                <td className="px-6 py-4 text-xs font-bold text-primary">{invoice.id}</td>
+                                                <td className="px-6 py-4 text-xs font-bold text-tertiary">{invoice.period}</td>
+                                                <td className="px-6 py-4 text-xs font-bold text-primary">{invoice.amount}</td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="text-[10px] font-black text-secondary uppercase tracking-widest">{invoice.status}</span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }
